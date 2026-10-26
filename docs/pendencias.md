@@ -23,9 +23,15 @@ Tudo abaixo está tratado no código (`src/content/site.ts`): o item **não apar
 - [ ] Atualizar nota e contagem (`company.rating`, hoje 5,0 / 68) antes do deploy.
 
 ## Técnico
-- [ ] Domínio (`kandogarage.com.br` ou `.com`): definir `SITE_URL` no deploy (canonical, sitemap, JSON-LD, OG).
+- [ ] Domínio (`kandogarage.com.br` ou `.com`): definir `VITE_SITE_URL` no deploy (canonical, sitemap, JSON-LD, OG). Lido por `getSiteUrl()` em `site.ts`, que funciona no Vite e em Node (build/SSR).
 - [ ] Analytics cookieless (Vercel Web Analytics, Plausible ou Umami) ou nenhum. Se houver, ativar `analytics.enabled`, incluir o script e liberar **só** o domínio dele na CSP.
 - [ ] Contato de segurança da Toss Lab em `public/.well-known/security.txt` (hoje usa o e-mail da oficina).
+
+## Versão React (ordem de serviço, sem ícones)
+- [ ] Microcopy novo em `site.ts` (`orderSheet`, `partTag`, legendas “Ficha 01–09”) usa só rótulos de layout e fatos da seção 1. Não há número de ordem, prazo, garantia nem valor. Se o cliente quiser números reais de OS ou campos como “Cliente/Veículo” preenchidos, confirmar antes.
+- [ ] Etiqueta “Peça trocada, peça mostrada” (`partTag`): confirmar com o cliente que “Serviço feito depois da sua aprovação” e “Mostrada a você na entrega” refletem a prática (vem do texto-base 6.6).
+- [ ] “Diagnóstico com equipamento” (faixa de confiança) e “scanner” (Injeção eletrônica) vêm do texto-base; confirmar o equipamento usado.
+- [ ] Formato de avaliações: depois da autorização, trocar `author` e `confirmed: true`.
 
 ## Ganhos imediatos para o cliente (fora do site)
 1. **Link da bio do Instagram quebrado**: `wa.me/988367054` não tem o 55 nem o DDD. Correto: `https://wa.me/5511988367054` (ou o site novo).
