@@ -22,11 +22,12 @@ const shownReviews = reviews.filter((r) => r.confirmed);
   <TrustBar />
   <SymptomPicker />
 
-  <section class="section sec-dark" id="servicos" aria-labelledby="servicos-h" style="background:var(--bg-alt)">
+  <section class="section sec-light" id="servicos" aria-labelledby="servicos-h">
     <div class="wrap">
       <div class="sec-head reveal">
         <h2 id="servicos-h">{servicesSection.h2}</h2>
         <p class="lead">{servicesSection.intro}</p>
+        <p class="note">{servicesSection.introNote}</p>
       </div>
       <div class="cards">{services.map((s) => <ServiceCard s={s} />)}</div>
       <div class="more-note reveal">

@@ -26,7 +26,10 @@ export function computeStatus(date: Date = new Date()): Status {
   const today = hours.week[day];
   if (today && minutes >= today.open && minutes < today.close) {
     const left = today.close - minutes;
-    if (left <= 60) return { state: 'closing', full: `Fecha em ${left} min`, short: `Fecha em ${left} min` };
+    if (left <= 60) {
+      const t = left === 60 ? '1 h' : `${left} min`;
+      return { state: 'closing', full: `Fecha em ${t}`, short: `Fecha em ${t}` };
+    }
     return { state: 'open', full: `Aberto agora · fecha às ${hourLabel(today.close)}`, short: 'Aberto agora' };
   }
   let when: string | null = null;

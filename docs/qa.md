@@ -1,21 +1,56 @@
 # QA
 
-> **Atenção:** esta revisão foi feita pelo próprio orquestrador, **não** por um `qa-reviewer` independente (o agente está definido em `.claude/agents/qa-reviewer.md`, mas não foi executado). Recomenda-se rodá-lo antes da aprovação do cliente.
+Revisão independente feita por subagente `qa-reviewer`, que não participou da construção. Data: 26/10/2026. Método: `npm run build` (sem erros nem warnings), `dist/` servido com os headers de `vercel.json` (`scripts/serve-dist.mjs`), `npx tsx scripts/test-status.mjs`, Playwright/Chromium em 360 px e 1280 px (dark e light), relógio simulado com `page.clock`, Lighthouse mobile rodado por mim e `npm audit`.
 
-| # | Item | Resultado |
-|---|---|---|
-| 1 | Fatos (endereço, WhatsApp 5511988367054, e-mail, horário, serviços, nota) batem com a seção 1 | Aprovado. Nada inventado. |
-| 2 | Links `wa.me` (todos os sintomas e serviços com mensagem codificada), `tel:`, `mailto:`, Maps, Instagram, avaliação | Aprovado na inspeção do HTML. **Não** foi clicado em produção: o envio real no WhatsApp deve ser testado num celular. |
-| 3 | Jornada do carro com problema: 2 toques até o WhatsApp com mensagem | Aprovado (chip de sintoma). |
-| 4 | Status de horário nos cenários pedidos | Aprovado: `npx tsx scripts/test-status.mjs`, 10/10 (seg 7h59, 8h00, 17h30, 18h01; sáb 13h30, 14h01; dom; sex 18h01). |
-| 5 | Marca: laranja = ação, âmbar = marca | Aprovado. **Ressalva:** emblema é provisório e o wordmark é texto (ver `brand-assets.md`). |
-| 6 | Conteúdo: `CONFIRMAR` não aparece para o usuário | Aprovado no texto visível. Há um comentário HTML `CONFIRMAR` no cabeçalho (invisível). Sem superlativos ou promessas absolutas. |
-| 7 | Metas de performance/segurança | Lighthouse atingido (`auditoria.md`). Notas de headers só medíveis em preview público. |
-| 8 | Sem formulário/input/cookie | Aprovado (0 ocorrências no HTML; sem cookies). |
-| 9 | JSON-LD | Gerado a partir de `site.ts` (AutoRepair com `Offer`/`Service`; FAQPage só com respostas confirmadas; sem Review/AggregateRating). **Não** validado no Rich Results Test (sem acesso externo). |
+Não foi possível, por falta de rede externa neste ambiente: securityheaders.com, Mozilla Observatory, Rich Results Test e clique real nos links externos (WhatsApp, Maps, Instagram).
 
-## Correções priorizadas
-1. (Alta) Obter logo original e fotos; atualizar nota/contagem de avaliações.
-2. (Alta) Autorização das avaliações: sem ela a seção mostra só o selo.
-3. (Média) Validar JSON-LD e headers no preview público.
-4. (Baixa) Teste com leitor de tela.
+## Resultado por item
+
+| # | Item | Resultado | Evidência |
+|---|---|---|---|
+| 1 | Fatos vs seção 1 | **Aprovado** | Endereço, CEP, coordenadas, Place ID, WhatsApp 5511988367054, `kandogarage@gmail.com`, horário (seg–sex 8–18, sáb 9–14, dom fechado), nota 5,0 / 68, slogan, 7 serviços oficiais + 2 citados por clientes, bairros atendidos: tudo idêntico à seção 1 (`site.ts`, HTML gerado, JSON-LD). Nenhum fato inventado. Diego não é citado nem em texto visível. |
+| 2 | Links (wa.me, tel, mailto, Maps, Instagram, avaliação) | **Aprovado com ressalvas** | Extraí todos os `href` de `dist/index.html`. 10 chips de sintoma: mensagens idênticas às da seção 5.2-C, URL-encoded corretamente. 9 serviços com mensagem própria correta (revisão usa a mesma mensagem do chip). CTA padrão (9 ocorrências) = mensagem da seção 6.2. `tel:+5511988367054` (3). Maps `search/?api=1&query=Kando+Garage&query_place_id=…` (5). Avaliação `search.google.com/local/writereview?placeid=…`. Instagram `https://www.instagram.com/kando_garage`. `mailto:` é montado por JS (`ui.ts:52-57`); sem JS aparece "kandogarage (arroba) gmail.com". Todos os links externos têm `target=_blank` e `rel="noopener noreferrer"` (0 exceções). Ressalvas: (a) o link "Ver todas no Google" é idêntico ao `mapsPlace` (`site.ts:44`), não há âncora de avaliações; (b) o clique real nos serviços externos não foi testado. |
+| 3 | Jornada "carro com problema" (360 px) | **Aprovado** | Toque 1: "Chamar no WhatsApp" (293×60 px) está acima da dobra e abre a mensagem padrão. Para mensagem por sintoma: toque 1 em "O que meu carro tem?" (acima da dobra) leva a `#sintomas`; toque 2 no chip abre o `wa.me` com a mensagem certa (verificado: chip do airbag → mensagem do airbag). Observação: depois do toque 1 só os 3 primeiros chips ficam visíveis; os demais exigem rolagem (rolar não conta como toque). Barra fixa WhatsApp/Ligar/Como chegar com 48+ px de altura sempre visível; some ao chegar no rodapé (opacidade 0, `pointer-events:none`). Menu mobile: abre, `aria-expanded` correto, `Esc` fecha. Sem rolagem horizontal (360 = 360). |
+| 4 | Status de horário | **Aprovado** | `test-status.mjs`: 10/10. Reteste no navegador com relógio simulado (fuso America/Sao_Paulo): seg 7h59 "Fechado · abre hoje às 8h"; seg 8h00 "Aberto agora · fecha às 18h"; seg 17h30 "Fecha em 30 min"; seg 18h00 e 18h01 "Fechado · abre amanhã às 8h"; sex 18h01 "abre amanhã às 9h" (correto, sábado abre 9h); sáb 8h59 "abre hoje às 9h"; sáb 13h30 "Fecha em 30 min"; sáb 14h01 "Fechado · abre segunda às 8h"; dom 12h00 e 23h59 "abre amanhã às 8h". Fuso do navegador em Tóquio e UTC não altera o resultado. Atualiza sozinho (17h59 → após 70 s virou "Fechado"). Linha "hoje" da tabela correta em todos os dias. Sem JS o badge mostra o horário resumido (degrada bem). Detalhes de texto na seção "Português". |
+| 5 | Marca | **Aprovado com ressalvas** | Laranja só em ação (CTAs, setas, foco); âmbar em marca/ênfase ("boas mãos", eyebrow, estrelas, nota, mini-escudos). Dark é a experiência principal, light coerente; atmosfera grafite coerente com o Instagram. Ressalvas: (a) **o emblema é uma ilustração provisória** e o **wordmark é texto** em Barlow Condensed ("KANDO / GARAGE", `Header.astro:15`), contrariando a regra 4.4 "usar somente a imagem/SVG do logo". Está documentado em `brand-assets.md` e depende do cliente (brand/ vazio), mas hoje o logo oficial NÃO está sendo mostrado. (b) No emblema do hero, engrenagens âmbar ao lado da chave de fenda laranja no mesmo componente (a regra 4.3 pede não misturar). Visual de baixo impacto, mas vale registrar. |
+| 6 | Conteúdo (português, tom, promessas, CONFIRMAR) | **Aprovado com ressalvas** | `CONFIRMAR`/colchetes/lorem no texto visível: **0** (dumps de `innerText` da home, privacidade e 404). Único `CONFIRMAR` no HTML é um comentário (`Header.astro:15`), invisível. Itens `confirmed:false` não renderizam (cards de avaliação, citação, 3 FAQs, CNPJ, galeria). Tom coerente, sem "o melhor/nº 1/líder" e sem "garantia total". Ressalvas no tópico "Português e promessas". |
+| 7a | Metas 8.2 (Lighthouse mobile, rodado por mim em `/`) | **Aprovado** | Performance 99, Acessibilidade 100, Boas práticas 100, SEO 100. LCP 1,8 s, CLS 0, TBT 0 ms (proxy de INP; INP real não medido), peso 144 KiB (< 500 KB), JS 3,3 KB gzip (< 30 KB). Lighthouse na página `/politica-de-privacidade` não rodou (interstitial do Chrome no teste); axe do próprio projeto cobre as 3 páginas, não reexecutei. |
+| 7b | Metas 9.2 | **Reprovado (parcial)** | OK: headers da 9.1 presentes em `vercel.json` e `public/_headers` (CSP, HSTS, nosniff, Referrer-Policy, Permissions-Policy, COOP, XFO) e servidos corretamente; `rel="noopener noreferrer"`; `.gitignore` com node_modules, `.env*`, dist; lockfile versionado; `npm audit`: 1 vulnerabilidade **baixa** (astro 7.1.0–7.3.2, injeção de CSS em View Transitions, não usada aqui; `npm audit fix` resolve), nenhuma alta/crítica. **Falha:** `public/.well-known/security.txt` deve ter o contato da **Toss Lab** e traz `mailto:kandogarage@gmail.com` (o e-mail da oficina). A nota A em securityheaders.com / Observatory não pôde ser medida aqui (só no preview público). Exposição do e-mail: o `href` é montado por JS, mas o endereço aparece em texto plano no JSON-LD de `index.html` (`email`), o que anula parte da ofuscação (baixo risco, pois é contato comercial). |
+| 8 | Sem form/input/cookies | **Aprovado** | 0 ocorrências de `form/input/select/textarea` no HTML da home; 0 cookies; `localStorage` vazio; 0 requisições para fora de `localhost` no carregamento; 0 erros ou warnings no console (CSP incluída). Mapa interativo só carrega após clique (iframe do Google criado apenas no clique). |
+| 9 | JSON-LD | **Aprovado com ressalva** | `@graph` com `AutoRepair` (9 `Offer/Service`, horário, geo, sameAs) e `FAQPage` com 6 perguntas (só respostas confirmadas); sem `Review/AggregateRating`; JSON válido. Ressalva: `url`, `logo`, `image` usam o domínio provisório (ver problema 1). Não validado no Rich Results Test. |
+| 10 | Estrutura/SEO técnico | **Reprovado** | Ver problemas 1 e 2 abaixo (canonical errado). Título e meta description idênticos à seção 7.1; 1 H1; hierarquia H2/H3 coerente; `lang`, `robots.txt`, `sitemap.xml`, manifest e OG com 1200×630 presentes; 404 com `noindex`. |
+
+## Português e promessas
+
+- **Termos inconsistentes:** "Air bag" (título do card, `site.ts:176`) e "airbag" no resto do site (chip, FAQ, meta). Escolher uma grafia (o Instagram/WhatsApp da empresa usa "Air bag"; o chip do cliente "airbag").
+- **Status:** "Fecha em 60 min" (seg 17h00) e "Fecha em 1 min" ficam estranhos; preferir "Fecha em 1 h" e "Fecha em 1 minuto" (`status-horario.ts:33`). O texto "Fecha em N min" não informa a hora de fechamento, ao contrário do estado aberto.
+- **Hero:** a seção 6.2 pede a linha "● Aberto agora · Seg–Sex 8h–18h · Sáb 9h–14h". O hero mostra só o status ("Fechado · abre hoje às 8h"), sem o resumo do horário. Além disso, em 360×740 essa linha fica parcialmente atrás da barra fixa.
+- **Promessas sem prova (todas vêm do texto-base da seção 6, mas continuam sem prova no site):** "Honestidade comprovada" (`site.ts:229`); "Preço justo" (`site.ts:230`); "É o elogio que mais se repete nas avaliações" (`site.ts:208`) enquanto as avaliações NÃO aparecem (autorização pendente), então a afirmação fica sem lastro visível; "Fim do barulho e mais estabilidade" (`site.ts:174`); "Diagnóstico com equipamento" (`site.ts:112`) e "com scanner" (`site.ts:171`), pois a seção 1 não confirma equipamento; "Orçamento antes de mexer" e "Todas as peças substituídas são mostradas" são promessas da empresa que o cliente precisa validar (a seção 1 só tem isso nas avaliações de clientes). Recomendo validar com o cliente e suavizar "comprovada" enquanto os cards de avaliação estiverem ocultos.
+- **Revisão da FAQ:** "Recomendamos chamar no WhatsApp antes" está marcado `confirmed: true` mesmo com o comentário `CONFIRMAR se atende sem agendamento` na linha acima (`site.ts:286-287`). A resposta evita afirmar, então é aceitável, mas a pendência continua aberta.
+- Nada de erro ortográfico encontrado no texto visível. Nome do Diego não aparece (correto).
+
+## Problemas encontrados, por prioridade
+
+### Alta
+1. **Canonical e `og:url` apontam para URLs que redirecionam.** `dist/index.html` traz `<link rel="canonical" href="https://kandogarage.com.br/index.html">`; a privacidade traz `…/politica-de-privacidade.html` e a 404 traz `…/404.html`. Em `vercel.json` há `cleanUrls: true`, então `.html` redireciona, e o `sitemap.xml` lista `/` e `/politica-de-privacidade` sem `.html`. Canonical em URL que redireciona, divergente do sitemap, prejudica o SEO local. Causa: `src/layouts/Base.astro:11` usa `Astro.url.pathname` do build (`/index.html`). Correção: normalizar (remover `index.html` e `.html`) ou usar `Astro.site`/`format: 'directory'`. Corrigir também `og:url` (`Base.astro:35`). A 404 não deveria ter canonical.
+2. **Logo oficial ausente (marca).** `brand/` está vazio; emblema é provisório e wordmark é texto (`src/components/Emblem.astro:4`, `src/components/Header.astro:15`). Obrigatório pedir ao cliente os SVG/PNG antes de aprovar a marca; depois conferir os hex (`src/styles/tokens.css:3`).
+3. **`security.txt` com o contato errado** (`public/.well-known/security.txt:1-2`): usa o e-mail da oficina, e não o da Toss Lab. Ajustar quando a Toss Lab informar o contato. Deixar de ter `Contact` da oficina, e remover o `Canonical` com o domínio provisório se o domínio mudar.
+4. **Domínio ainda não confirmado, espalhado em canonical, sitemap, robots, OG e JSON-LD** (`src/content/site.ts:37`, fallback `https://kandogarage.com.br`). Garantir `SITE_URL`/`site` definido no deploy, senão tudo vai com domínio possivelmente errado. Não bloqueia o preview.
+
+### Média
+5. **Avaliações e citação ocultas** (autorização pendente): a seção 6.8 mostra só o selo; enquanto isso, retirar ou suavizar as frases que dependem delas (item "Promessas sem prova"). Em seguida, atualizar a nota/contagem (5,0 / 68) antes do deploy.
+6. **Hero sem o resumo de horário** exigido pela seção 6.2 (`src/components/Hero.astro`) e status parcialmente coberto pela barra fixa em 360×740.
+7. **Alvos de toque pequenos no rodapé** (360 px): telefone 124×36, e-mail 193×36, Instagram 122×36 e "Política de privacidade" 154×**23** px (`src/components/Footer.astro`). O último fica abaixo de 24 px (WCAG 2.2 AA, 2.5.8) e todos abaixo dos 44–48 px que a auditoria declara. Aumentar o padding vertical.
+8. **`npm audit`**: 1 vulnerabilidade baixa em `astro` (7.1.0–7.3.2). Rodar `npm audit fix` e rebuildar.
+
+### Baixa
+9. Padronizar "Air bag" / "airbag" (`site.ts:176`, `site.ts:136`, FAQ).
+10. Ajustar textos do status ("Fecha em 60 min", "Fecha em 1 min"; `src/scripts/status-horario.ts:33`).
+11. Link "Ver todas no Google" duplica o link de lugar (`site.ts:44`); se houver URL direta das avaliações, usar.
+12. E-mail em texto plano no JSON-LD (`site.ts:379`) reduz o benefício da ofuscação por JS; decidir e documentar.
+13. Misturar âmbar e laranja no emblema do hero (regra 4.3).
+14. Itens não verificáveis aqui: leitor de tela real (seletor de sintomas), zoom 200%, nota A de securityheaders/Observatory, validação do JSON-LD, INP real, clique real nos links externos num celular. Rodar no preview público.
+
+## Ganhos imediatos para o cliente (lembrar no relatório final)
+- Link da bio do Instagram quebrado (`wa.me/988367054`): trocar por `https://wa.me/5511988367054` ou pelo site.
+- Horário divergente no Google Business Profile (8h30–19h): alinhar com 8h–18h.

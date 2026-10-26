@@ -41,10 +41,14 @@ export function initActionBar(): void {
   const footer = document.querySelector('[data-footer]');
   const targets = document.querySelectorAll<HTMLElement>('[data-action-bar], [data-fab]');
   if (!footer || !targets.length || !('IntersectionObserver' in window)) return;
-  new IntersectionObserver((en) => {
-    const hide = en[0].isIntersecting;
-    targets.forEach((t) => t.classList.toggle('hidden', hide));
-  }, { threshold: 0.15 }).observe(footer);
+  const hero = document.getElementById('inicio');
+  let inFooter = false, inHero = false;
+  const apply = () => {
+    document.querySelectorAll<HTMLElement>('[data-action-bar]').forEach((t) => t.classList.toggle('hidden', inFooter));
+    document.querySelectorAll<HTMLElement>('[data-fab]').forEach((t) => t.classList.toggle('hidden', inFooter || inHero));
+  };
+  new IntersectionObserver((en) => { inFooter = en[0].isIntersecting; apply(); }, { threshold: 0.15 }).observe(footer);
+  if (hero) new IntersectionObserver((en) => { inHero = en[0].isIntersecting; apply(); }, { threshold: 0.3 }).observe(hero);
 }
 
 /** E-mail montado no navegador: não aparece em texto plano no HTML. Sem JS, fica o texto "arroba". */

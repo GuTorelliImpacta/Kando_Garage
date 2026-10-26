@@ -160,6 +160,7 @@ export interface Service {
 export const servicesSection = {
   h2: 'Mecânica geral, preventiva e especializada',
   intro: 'Trabalhamos com veículos nacionais e importados, com serviço e diagnóstico em todas estas áreas:',
+  introNote: 'Oficina mecânica no Tremembé para quem precisa de diagnóstico de injeção eletrônica, câmbio, freios, suspensão e revisão de carro, também para moradores do Tucuruvi e do Mandaqui.',
   link: 'Falar sobre isso',
   outroH: 'Não achou o seu problema?',
   outroText: 'Descreva no WhatsApp, ou mande um áudio, que a gente explica.',
@@ -170,10 +171,10 @@ const svcMsg = (what: string) => `Olá! Vim pelo site. Gostaria de falar sobre $
 export const services: Service[] = [
   { id: 'injecao', icon: 'zap', title: 'Injeção eletrônica', text: 'Diagnóstico com scanner para falhas, perda de potência, consumo alto e luz da injeção acesa.', message: svcMsg('injeção eletrônica'), source: 'oficial' },
   { id: 'motor', icon: 'engine', title: 'Motor', text: 'Ruídos, vazamentos, superaquecimento, correias e manutenção completa do motor.', message: svcMsg('o motor do meu carro'), source: 'oficial' },
-  { id: 'cambio', icon: 'gearbox', title: 'Câmbio', text: 'Marchas arranhando, trancos, câmbio pesado ou ruidoso. Diagnóstico e reparo.', message: svcMsg('o câmbio do meu carro'), source: 'oficial' },
+  { id: 'cambio', icon: 'gearbox', title: 'Câmbio', text: 'Marchas arranhando, trancos, câmbio pesado ou ruidoso. Diagnóstico e reparo de câmbio para nacionais e importados.', message: svcMsg('o câmbio do meu carro'), source: 'oficial' },
   { id: 'suspensao', icon: 'spring', title: 'Suspensão', text: 'Amortecedores, molas, buchas e terminais. Fim do barulho e mais estabilidade.', message: svcMsg('a suspensão do meu carro'), source: 'oficial' },
   { id: 'freios', icon: 'disc', title: 'Freios', text: 'Pastilhas, discos, fluido e diagnóstico de ruídos e pedal mole. Segurança em primeiro lugar.', message: svcMsg('os freios do meu carro'), source: 'oficial' },
-  { id: 'airbag', icon: 'airbag', title: 'Air bag', text: 'Diagnóstico da luz do airbag acesa e do sistema de segurança do veículo.', message: svcMsg('o airbag do meu carro'), source: 'oficial' },
+  { id: 'airbag', icon: 'airbag', title: 'Airbag', text: 'Diagnóstico da luz do airbag acesa e do sistema de segurança do veículo.', message: svcMsg('o airbag do meu carro'), source: 'oficial' },
   { id: 'revisoes', icon: 'clipboard', title: 'Revisões periódicas', text: 'Seguimos a agenda de revisão do seu veículo, sem empurrar serviço desnecessário.', message: 'Olá! Vim pelo site. Quero agendar a revisão do meu carro. Modelo/ano/km: ', source: 'oficial' },
   { id: 'arrefecimento', icon: 'thermo', title: 'Arrefecimento', text: 'Limpeza do sistema, radiador, mangueiras e controle de temperatura.', message: svcMsg('o sistema de arrefecimento'), source: 'clientes' },
   { id: 'combustivel', icon: 'fuel', title: 'Sistema de combustível', text: 'Diagnóstico e correção de vazamentos e falhas na alimentação.', message: svcMsg('o sistema de combustível'), source: 'clientes' },
@@ -205,7 +206,7 @@ export const how = {
   ],
   highlight: {
     title: 'Peça trocada, peça mostrada',
-    text: 'É o elogio que mais se repete nas avaliações, e virou promessa: você vê cada peça substituída e entende o que foi feito no seu carro.',
+    text: 'É um elogio que aparece sempre nas avaliações, e virou promessa: você vê cada peça substituída e entende o que foi feito no seu carro.',
     // CONFIRMAR autorização para exibir o trecho da avaliação
     quote: {
       confirmed: false,
@@ -281,7 +282,7 @@ export interface Faq extends Confirmable {
 }
 export const faqSection = { h2: 'Perguntas frequentes' };
 export const faq: Faq[] = [
-  { confirmed: true, q: 'Vocês atendem carros importados?', a: 'Sim. Trabalhamos com veículos nacionais e importados.' },
+  { confirmed: true, q: 'Vocês atendem carros importados?', a: 'Sim. Trabalhamos com veículos nacionais e importados, com serviço e diagnóstico em injeção eletrônica, motor, câmbio, suspensão, freios e airbag. Atendemos toda a Zona Norte.' },
   { confirmed: true, q: 'Vocês mostram as peças trocadas?', a: 'Sim. Todas as peças substituídas são mostradas na entrega.' },
   // CONFIRMAR se atende sem agendamento
   { confirmed: true, q: 'Preciso agendar?', a: 'Recomendamos chamar no WhatsApp antes para garantir o melhor horário.' },
@@ -297,11 +298,12 @@ export const faq: Faq[] = [
 // ---------------------------------------------------------------- local
 export const location = {
   h2: 'Venha nos visitar no Tremembé',
+  intro: 'A Kando Garage é uma oficina mecânica no Tremembé, na Zona Norte de São Paulo. Atendemos moradores e quem trabalha na região, com mecânica geral, preventiva e especializada para carros nacionais e importados.',
   hoursTitle: 'Horário de funcionamento',
   today: 'hoje',
   areaTitle: 'Atendemos toda a Zona Norte',
   area: ['Tremembé', 'Jardim Tremembé', 'Tucuruvi', 'Mandaqui', 'Jaçanã', 'Vila Irmãos Arnoni', 'Horto Florestal'],
-  areaTail: 'e região.',
+  areaTail: 'e região. Se você procura mecânico na Zona Norte de SP para revisão, injeção eletrônica, câmbio ou freios, é só chamar no WhatsApp.',
   openMaps: 'Abrir no Google Maps',
   loadMap: 'Carregar mapa interativo',
   mapNote: 'Ilustração esquemática. O mapa interativo só carrega quando você pedir.',
@@ -347,6 +349,7 @@ export const seo = {
   privacyTitle: 'Política de privacidade | Kando Garage',
   privacyDescription: 'A Kando Garage não coleta dados pessoais neste site: sem formulários, sem login e sem cookies de rastreamento.',
   notFoundTitle: 'Página não encontrada | Kando Garage',
+  notFoundDescription: 'A página que você procurava não foi encontrada. Volte ao início ou chame a Kando Garage no WhatsApp.',
 };
 
 /** Medição: desligada por padrão. Quando ligada, o script só chama o provedor se ele existir na página. */
@@ -392,7 +395,7 @@ export function jsonLd(url: string, faqItems: Faq[]) {
       '@type': 'OfferCatalog',
       name: 'Serviços',
       itemListElement: [
-        'Injeção eletrônica', 'Motor', 'Câmbio', 'Suspensão', 'Freios', 'Air bag',
+        'Injeção eletrônica', 'Motor', 'Câmbio', 'Suspensão', 'Freios', 'Airbag',
         'Revisões periódicas', 'Sistema de arrefecimento', 'Sistema de combustível',
       ].map((name) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name } })),
     },

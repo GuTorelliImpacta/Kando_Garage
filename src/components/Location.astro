@@ -7,7 +7,7 @@ const a = company.address;
 ---
 <section class="section sec-light" id="onde-estamos" aria-labelledby="onde-h">
   <div class="wrap">
-    <div class="sec-head reveal"><h2 id="onde-h">{location.h2}</h2></div>
+    <div class="sec-head reveal"><h2 id="onde-h">{location.h2}</h2><p class="lead">{location.intro}</p></div>
     <div class="loc-grid">
       <div class="loc-info reveal">
         <address class="addr">
@@ -39,7 +39,7 @@ const a = company.address;
       <div class="map reveal" data-map data-src={links.mapsEmbed}>
         <MapArt />
         <div class="map-ui">
-          <a class="btn btn-primary btn-sm" href={links.maps} target="_blank" rel="noopener noreferrer" data-track="click_directions" data-origem="mapa"><Icon name="pin" size={18} />{location.openMaps}</a>
+          <a class="btn btn-ghost btn-sm" href={links.maps} target="_blank" rel="noopener noreferrer" data-track="click_directions" data-origem="mapa"><Icon name="pin" size={18} />{location.openMaps}</a>
           <button class="btn btn-ghost btn-sm" type="button" data-map-load>{location.loadMap}</button>
           <p class="note">{location.mapNote}</p>
         </div>

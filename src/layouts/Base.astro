@@ -8,7 +8,8 @@ import { seo, company, jsonLd, faq } from '../content/site';
 interface Props { title?: string; description?: string; home?: boolean; schema?: boolean; noindex?: boolean }
 const { title = seo.title, description = seo.description, home = true, schema = false, noindex = false } = Astro.props;
 const base = (Astro.site?.toString() ?? company.siteUrl).replace(/\/$/, '');
-const canonical = new URL(Astro.url.pathname, base + '/').toString().replace(/\/$/, '') || base;
+const path = Astro.url.pathname.replace(/\/index\.html$/, '/').replace(/\.html$/, '');
+const canonical = path === '/' || path === '' ? `${base}/` : `${base}${path}`;
 const faqItems = faq.filter((f) => f.confirmed && f.a);
 const ld = schema ? JSON.stringify(jsonLd(base, faqItems)) : '';
 ---
@@ -19,7 +20,7 @@ const ld = schema ? JSON.stringify(jsonLd(base, faqItems)) : '';
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
+    {!noindex && <link rel="canonical" href={canonical} />}
     {noindex && <meta name="robots" content="noindex" />}
     <meta name="theme-color" content="#141516" />
     <meta name="color-scheme" content="dark light" />
@@ -32,12 +33,15 @@ const ld = schema ? JSON.stringify(jsonLd(base, faqItems)) : '';
     <meta property="og:site_name" content={company.name} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
+    {!noindex && <meta property="og:url" content={canonical} />}
     <meta property="og:image" content={`${base}/og.jpg`} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="Kando Garage: seu carro em boas mãos. Nota 5,0 no Google." />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={`${base}/og.jpg`} />
     {ld && <script type="application/ld+json" set:html={ld} />}
   </head>
   <body>
