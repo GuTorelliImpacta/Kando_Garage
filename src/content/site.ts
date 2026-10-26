@@ -487,6 +487,80 @@ export const analytics = {
   provider: 'none' as 'none' | 'vercel' | 'plausible' | 'umami',
 };
 
+// ---------------------------------------------------------------- acréscimos da versão React
+/**
+ * Rótulos estruturais usados pelos componentes React (sem ícones). Tudo que aparece na tela
+ * e não estava acima mora aqui, para que nenhum texto de interface fique solto nos componentes.
+ */
+export const copy = {
+  ui: {
+    menu: 'Menu',
+    close: 'Fechar',
+    mainNav: 'Principal',
+    quickActions: 'Contato rápido',
+    whatsapp: 'WhatsApp',
+    home: 'Início',
+    emblemLabel: 'Emblema Kando Garage',
+    mapTitle: 'Mapa: Kando Garage, R. Mamud Rahd, 202, Tremembé',
+  },
+  hero: {
+    osLabel: 'OS',
+    osNumber: 'Nº 0001 / 2026',
+    placeLabel: 'Bairro',
+    placeValue: 'Tremembé · SP',
+    proofText: 'De 5,0 no Google · 68 avaliações',
+    legend: 'Esc. 1:1 · Det. A · Folha 01/04',
+  },
+  /** Rótulos do desenho técnico (decorativos; não representam medidas reais). */
+  drawing: {
+    teeth: ['Z=24', 'Z=18', 'Z=12'],
+  },
+  trustBar: {
+    caption: 'Ficha de confiança · Rev. 2026',
+    items: [
+      { head: '5,0', label: 'Nota no Google', text: '68 avaliações' },
+      { head: 'Peça trocada, peça mostrada', label: '', text: 'Você vê tudo' },
+      { head: 'Orçamento antes de mexer', label: '', text: 'Só fazemos o que você aprovar' },
+      { head: 'Nacionais e importados', label: '', text: 'Diagnóstico com equipamento' },
+    ],
+  },
+  symptoms: { countLabel: 'Sintomas' },
+  services: {
+    tableCaption: 'Serviços · tabela de especificação',
+    cols: { n: 'Nº', service: 'Serviço', what: 'O que atendemos', source: 'Origem', action: 'Ação' },
+    sourceLabels: { oficial: 'Oficial', clientes: 'Citado por clientes' },
+  },
+  partTag: {
+    number: 'Peça Nº 01',
+    dateLabel: 'Data',
+    promiseLabel: 'A promessa',
+    rulerStart: 'Km',
+    rulerEnd: 'Tempo',
+  },
+  differentials: { countLabel: 'Motivos' },
+  reviews: { panelLine: 'De 5,0 · 68 avaliações no Google', source: 'Cliente · Avaliação no Google' },
+  faq: { open: 'Abrir', close: 'Fechar', more: 'Outra dúvida? É só chamar no WhatsApp.' },
+  location: {
+    addressLabel: 'Endereço',
+    coords: 'Coordenadas',
+    mapSchematic: 'Esquema · não está em escala',
+  },
+  footer: {
+    year: 2026,
+    addressLabel: 'Endereço',
+    whatsappLabel: 'WhatsApp',
+    emailLabel: 'E-mail',
+    instagramLabel: 'Instagram',
+    hoursLabel: 'Horário',
+    cnpjLabel: 'CNPJ',
+    madeBy: 'Site por',
+    rights: '©',
+  },
+  notFound: { tag: 'Peça não encontrada', label: 'Erro 404' },
+  emailAt: 'arroba',
+  seoExtra: { ogAlt: 'Kando Garage: seu carro em boas mãos. Nota 5,0 no Google.' },
+} as const;
+
 // ---------------------------------------------------------------- JSON-LD
 export function openingHoursSpec() {
   return [

@@ -16,7 +16,7 @@ http.createServer((req, res) => {
   const ext = extname(f);
   let body = readFileSync(f);
   const h = { ...headers, 'Content-Type': types[ext] ?? 'application/octet-stream' };
-  if (/^\/(_astro|fonts)\//.test(p)) h['Cache-Control'] = 'public, max-age=31536000, immutable';
+  if (/^\/(assets|fonts)\//.test(p)) h['Cache-Control'] = 'public, max-age=31536000, immutable';
   if (['.html', '.js', '.css', '.svg', '.json', '.xml', '.txt', '.webmanifest'].includes(ext)) { body = gzipSync(body); h['Content-Encoding'] = 'gzip'; }
   res.writeHead(code, h);
   res.end(body);

@@ -50,19 +50,3 @@ export function computeStatus(date: Date = new Date()): Status {
   }
   return { state: 'closed', full: `Fechado · abre ${when} às ${hourLabel(open)}`, short: 'Fechado' };
 }
-
-export function applyStatus(root: ParentNode = document): void {
-  const s = computeStatus();
-  root.querySelectorAll<HTMLElement>('[data-status]').forEach((el) => {
-    el.dataset.state = s.state;
-    const full = el.querySelector<HTMLElement>('[data-status-full]');
-    const short = el.querySelector<HTMLElement>('[data-status-short]');
-    if (full) full.textContent = s.full;
-    if (short) short.textContent = s.short;
-  });
-  const { day } = nowInSaoPaulo(new Date());
-  root.querySelectorAll<HTMLElement>('table.hours tr[data-days]').forEach((tr) => {
-    const on = (tr.dataset.days ?? '').split(',').map(Number).includes(day);
-    if (on) tr.setAttribute('aria-current', 'true'); else tr.removeAttribute('aria-current');
-  });
-}
