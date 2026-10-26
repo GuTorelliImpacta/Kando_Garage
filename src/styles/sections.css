@@ -78,6 +78,7 @@
 .plate__bp { inset: 0; width: 100%; height: 100%; color: var(--kg-amber-400); }
 .plate__emblem { display: none; left: 16.667%; top: 10.588%; width: 66.667%; height: 68.235%; }
 .plate__cap { display: none; }
+.bp__txt { fill: var(--kg-amber-400); }
 .bp__txt text { font: 600 11px var(--font-body); letter-spacing: .1em; }
 @media (min-width: 1024px) {
   .hero__grid { display: grid; grid-template-columns: 7fr 5fr; gap: 48px; align-items: center; }
@@ -363,3 +364,9 @@ a.row:hover .row__act { text-decoration-thickness: 4px; color: #f59a74; }
 .nf__tag { display: inline-block; margin-top: 16px; padding: 10px 14px; background: var(--kg-paper); color: var(--kg-ink); border: 2px solid var(--kg-ink); border-bottom-width: 3px; box-shadow: 3px 3px 0 rgb(0 0 0 / .55); }
 .nf .btns { margin-top: 24px; }
 @media (min-width: 1024px) { .nf__in { grid-template-columns: 5fr 6fr; gap: 80px; } }
+
+/* ---------- Auditoria (fase 4): alvos de toque >= 48 px nos links soltos e movimento reduzido ---------- */
+.foot__fields .tlink, .faq__more .tlink { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; min-width: 48px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+}

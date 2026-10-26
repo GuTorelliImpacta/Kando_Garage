@@ -1,29 +1,121 @@
-# Auditoria de performance e acessibilidade
+# Auditoria de performance e acessibilidade (Fase 4, versão React)
 
-Medido em 26/10/2026 sobre o build estático servido com os headers de `vercel.json` e gzip (`scripts/serve-dist.mjs`), Lighthouse mobile (throttling padrão), Chromium headless. **Medir de novo no preview real da Vercel.**
+Medido em 26/10/2026 sobre `npm run build` servido por `scripts/serve-dist.mjs` (headers e CSP do `vercel.json`, gzip), Chromium headless 1243, Lighthouse 13 mobile (throttling padrão, 3 rodadas por página), axe-core 4.14 e scripts Playwright. **Refazer no preview real da Vercel** (brotli, CDN e HTTP/2 mudam os tempos). Os scripts de medição foram escritos no scratchpad e não fazem parte do repositório; `scripts/audit-a11y.mjs` continua sendo o gate de axe.
 
-| Métrica | Meta | Antes (CSS externo, sem gzip) | Depois |
+## 1. Lighthouse mobile contra a seção 8.2
+
+| Métrica | Meta | Antes das correções | Depois | Situação |
+|---|---|---|---|---|
+| Performance, home | ≥ 95 | 99 (3/3 rodadas) | **99** (3/3) | ok |
+| Performance, política | ≥ 95 | 100 | **100** | ok |
+| Acessibilidade | 100 | 100 / 100 | **100 / 100** | ok |
+| Boas práticas | 100 | 100 / 100 | **100 / 100** | ok |
+| SEO | 100 | 100 / 100 | **100 / 100** | ok |
+| LCP (home / política) | < 2,0 s | 1,8 s / 1,7 s | **1,8 s / 1,7 s** | ok |
+| FCP (home) | n/a | 1,5 s | 1,5 s | |
+| CLS | < 0,05 | 0 | **0** | ok |
+| TBT (home, proxy de INP) | n/a | 40–90 ms | **40–60 ms** | ok |
+| INP (proxy, ver 3.7) | < 200 ms | n/a | **≤ 48 ms** com CPU 4x | ok |
+| Peso da home transferido | < 500 KB | 223 KB | **223 KB** | ok |
+| **JS total** | **< 30 KB gzip** | 83,6 KB (hydrate 83,6 + entrada 1,0) | **83,6 KB gzip** (81,7 KB com gzip -9; **71,1 KB brotli**) | **não atende** |
+
+O ganho de Lighthouse já estava no teto; as correções desta fase mexem em acessibilidade, não em tempo.
+
+## 2. axe-core (WCAG 2.0/2.1 A e AA + best-practice)
+
+`node scripts/audit-a11y.mjs http://localhost:4340`: 3 páginas (home, política, 404) × dark/light × 360/1280 px = 12 combinações, **0 violações** antes e depois das correções. Único "erro de console" é o 404 da própria página `/nao-existe` (esperado). Sem violação de CSP.
+
+## 3. Checagem manual por script
+
+### 3.1 Zoom 200% e reflow
+Viewport 640x400 (equivale a 1280x800 com zoom 200%) e 320x256 (400%): `scrollWidth == clientWidth` em home e política (**sem rolagem horizontal**), nenhum texto cortado por `overflow:hidden`. O único elemento que passa da borda é a placa decorativa do hero (`aria-hidden`, cortada pela seção por desenho). Header fixo (85 px) + barra de ação (58 px) ocupam 36% de 400 px de altura: legível e navegável, com `scroll-margin-top` nas âncoras. Captura: `scratchpad/shots/zoom200-top.png`.
+
+### 3.2 Ordem de foco e foco visível
+Tab do topo ao fim: 55 paradas a 360 px (dark) e 56 a 1280 px (light). Ordem = ordem visual: link "Ir para o conteúdo", logo, MENU (mobile) ou nav (desktop), WhatsApp, os 10 sintomas, serviços, passos, avaliações, FAQ, local, rodapé, barra de ação fixa por último (fixa no rodapé da tela, DOM no fim, aceitável). Os dois "saltos para cima" detectados são a barra fixa e o botão do mapa (mudança de layout sticky), não ordem quebrada. Todos os controles têm caixa visível e anel de foco (outline 3 px branco/ink + halo). Os 9 links "Falar sobre isso" da tabela de serviços mostram `outline: none` no próprio `<a>` porque o anel é desenhado no `::after` que cobre a linha inteira (`.tlink--stretch:focus-visible::after`): o anel existe e é visível, é falso positivo do script.
+
+### 3.3 Alvos de toque a 360 px (getBoundingClientRect de todos os links e botões)
+
+| | Antes | Depois |
+|---|---|---|
+| Home, controles com lado < 48 px | 16 de 54 | **0 de 53** |
+| Política, controles com lado < 48 px | 7 de 14 | **1 de 13** |
+
+Antes: telefone, "Ligar", e-mail, Instagram e endereço do rodapé (20 a 44 px de altura) e o link "Outra dúvida?" (47 px). Os "Falar sobre isso" (27 px) são link esticado: a área de clique é a linha inteira (`.srow`, ≥ 48 px). Restante: o e-mail dentro do parágrafo da política (205x20) é link em linha dentro de texto, exceção do critério 2.5.8 (WCAG 2.2) e sem exigência no 2.1 AA; mantido para não quebrar o fluxo do texto.
+
+### 3.4 Contraste real
+axe (0 falhas) mais amostragem própria: cor computada de todo texto visível contra o fundo efetivo, composição de alfa, 4 combinações de tema/tamanho × 2 páginas (277 a 288 textos na home). Pior par de texto real: **4,99:1** (link laranja do rodapé em dark). O script sinalizou apenas texto dentro de SVG decorativo `aria-hidden`: o rótulo "R. MAMUD RAHD" do mapa (o script ignora o `<rect>` do SVG; o par real é #9a9da3 sobre #1d1e20 = 6,14:1) e os "Z=24/18/12" da placa técnica (o script lê `color` e não `fill`; antes o texto herdava âmbar a 60% de alfa, 3,71:1). Corrigi os rótulos Z para âmbar pleno (`.bp__txt { fill: var(--kg-amber-400) }`, 8,24:1) embora seja decoração isenta pelo 1.4.3.
+
+### 3.5 prefers-reduced-motion
+Antes: 0 animações, mas **58 elementos** ainda com transição de 0,12 a 0,2 s (cor de hover, fundo, header). Depois: **0 animações e 0 transições**, `scroll-behavior: auto`, nenhum `.reveal` oculto. Correção: regra global em `sections.css` (`transition/animation-duration: .01ms`). Sem reduce, 81 elementos animam/transicionam.
+
+### 3.6 Menu mobile (360 px)
+Fechado: `aria-expanded="false"`, rótulo "Abrir menu", painel `visibility:hidden` (links fora do Tab; 3 Tabs saem em skip, logo, MENU). Aberto: `aria-expanded="true"`, rótulo "Fechar menu", foco vai para o 1º link, rolagem travada, **foco preso** (12 Tabs ciclam entre os 4 links, CTA e FECHAR). Esc fecha e devolve o foco ao botão. Clicar num link fecha o menu e navega à âncora (`#como-trabalhamos`). Itens do menu com 56 a 72 px de altura. Nome acessível contém o texto visível (MENU/FECHAR).
+
+### 3.7 Seletor de sintomas e INP
+Árvore de acessibilidade (`ariaSnapshot`): região nomeada pelo H2, lista com 10 itens na ordem 01 a 10; cada link tem o nome "título, Área: X, Chamar no WhatsApp"; o numeral é `aria-hidden` (a ordem é transmitida pela lista, não pelo numeral). Correção: como o CSS usa `list-style: none`, Safari/VoiceOver removem a semântica de lista; adicionei `role="list"` em todos os `ol/ul` (sintomas, diferenciais, passos, menu, galeria, fatos, política). INP medido por Event Timing com CPU 4x, tela 360 px: cliques no menu e no FAQ **16 a 48 ms**. Durante a hidratação (primeiros ~3 s, 4x) um pointer-over chegou a 352 ms; o clique real fica abaixo de 50 ms.
+
+### 3.8 Não verificado
+Leitor de tela real (NVDA, VoiceOver, TalkBack) no seletor de sintomas, validação em dispositivo físico, zoom do navegador por UI (usei emulação de viewport) e o carrossel de avaliações (não renderizado sem autorização). Fazer na revisão final com o cliente.
+
+## 4. Correções aplicadas em `src/` (baixo risco)
+- `sections.css`: links soltos do rodapé e do FAQ viram `inline-flex` com `min-height/min-width: 48px`; reduced-motion global; rótulos Z da placa com `fill` pleno.
+- `role="list"` em 7 listas (`Header`, `Gallery`, `SymptomPicker`, `Differentials`, `SplitShieldSteps`, `TrustBar`, `PoliticaDePrivacidade`); `Reveal` aceita a prop `role`.
+- Typecheck limpo, build refeito, axe 12/12 com 0 violações, Lighthouse remedido.
+
+## 5. JavaScript: 83,6 KB gzip contra meta de 30 KB (pendente, decisão do cliente)
+
+### 5.1 Onde estão os bytes (source map do bundle, bytes minificados)
+| Parte | Raw | Observação |
+|---|---|---|
+| `react-dom-client` | 198,7 KB | monolítico (CJS), sem tree-shaking possível |
+| `react` + `react-dom` + `scheduler` | 14,5 KB | |
+| **Piso do React** (só `hydrateRoot` vazio, medido com esbuild) | **218 KB raw, 67,5 KB gzip, 58,1 KB brotli** | |
+| Código do app (`src/`) | ≈ 53 KB, ≈ 14 KB gzip | dos quais 15,8 KB é `site.ts` (texto do site duplicado no JS para a hidratação), 5,2 KB `Emblem` |
+
+Conclusão: **com React 19 a meta de 30 KB é inatingível**: o piso do runtime sozinho é 67,5 KB gzip, 2,2x a meta.
+
+### 5.2 Experimentos sem trocar de framework (cópia no scratchpad, projeto intocado)
+| Experimento | JS total gzip -9 | brotli |
+|---|---|---|
+| Base | 81,8 KB | 71,0 KB |
+| `build.target: 'esnext'` (hoje `es2022`) | 81,7 KB | 71,1 KB |
+| Sem `StrictMode` (só dev, não existe em produção) | 81,7 KB | 70,9 KB |
+| Reminificar com esbuild por cima do oxc | 81,9 KB | 71,3 KB |
+| Polyfills | já desligados (`modulePreload.polyfill: false`); nada a remover | |
+| Code splitting | já feito: entrada de 1 KB, hidratação em chunk separado carregado depois do FCP; não reduz o total, só tira do caminho crítico (por isso TBT 40–60 ms) | |
+| Ilhas pequenas (hidratar só Header, StatusBadge, barra de ação, EmailLink, Reveal) | **mínimo ≈ 67,5 + ~3 = ~70 KB**, ganho de ~12 KB e exige reestruturar o SSR em contêineres por ilha | |
+
+Nenhuma configuração do Vite chega perto: nada abaixo de ~70 KB gzip enquanto `react-dom/client` estiver no cliente. Não alterei `vite.config.ts` (ganhos de 0,1 KB não justificam).
+
+### 5.3 Preact/compat (medido em cópia, `react` e `react-dom` aliased só no build do cliente; o SSR de pré-render continua em React)
+| | React 19 | Preact 11 compat | |
 |---|---|---|---|
-| Performance | ≥ 95 | 95–96 | **99** |
-| Acessibilidade | 100 | 100 | **100** |
-| Boas práticas | 100 | 100 | **100** |
-| SEO | 100 | 100 | **100** |
-| LCP | < 2,0 s | 2,4–2,6 s | **1,8 s** |
-| CLS | < 0,05 | 0 | **0** |
-| TBT (proxy de INP) | INP < 200 ms | 0 ms | **0 ms** |
-| Peso da home | < 500 KB | 232 KB | **144 KB** |
-| JS total | < 30 KB gzip | 2,4 KB | **3,3 KB gzip** (1 arquivo, vanilla) |
+| JS total gzip (Vite) | 83,6 KB | **22,4 KB hydrate + 1,0 KB entrada** | **-72%** |
+| JS total gzip -9 / brotli | 81,8 / 71,0 KB | **22,7 / 20,4 KB** | **atende < 30 KB** |
+| Peso transferido da home | 223 KB | 164 KB | |
+| Lighthouse home (3 rodadas) | 99 / 99 / 99 | 98 / 99 / 97 | |
+| LCP / CLS | 1,8 s / 0 | 1,8 s / 0 | igual |
+| TBT | 40–60 ms | 70–170 ms (hidratação do Preact refaz mais) | pior, ainda baixo |
+| INP proxy (CPU 4x) | ≤ 48 ms | ≤ 40 ms | igual |
+| axe, 12 combinações | 0 violações | 0 violações | igual |
+| Funcional | menu, Esc, status de horário, barra de ação, e-mail montado, reveal | idênticos, 0 erros ou avisos no console | |
 
-Correções feitas: CSS inline (`inlineStylesheets: 'always'`, elimina o bloqueio de renderização), gzip/brotli e cache imutável para `/_astro` e `/fonts`, preload só da fonte do H1.
+Preact 11.0.2 hidratou o HTML gerado pelo `renderToString` do React sem mismatch. Custos da troca: a pré-render e o cliente passam a usar runtimes diferentes (risco de divergência futura em componentes novos), `preact/compat` não é 100% React (cuidado com Suspense/`use`/formulários se forem adotados), TBT um pouco maior. A troca em produção é uma alteração de ~10 linhas em `vite.config.ts` mais `npm i preact`; **não foi aplicada**.
 
-## axe-core (WCAG 2.1 A/AA + best-practice)
-`scripts/audit-a11y.mjs`: 3 páginas × dark/light × 360/1280 px = **0 violações**, 0 erros de console (CSP incluída). Corrigidos no caminho: nome acessível do logo e da prova social não continham o texto visível, botão flutuante fora de landmark.
+### 5.4 Terceira via (recomendada se o cliente quiser a meta e manter React)
+Usar React só no build (SSG, como já é) e **não enviar React ao cliente**: o comportamento (menu, status, barra de ação, reveal, e-mail, mapa) vira script vanilla de ~6 a 8 KB gzip (a versão Astro anterior fechou em 3,3 KB; a lógica de status sozinha, com os horários, mede 4,3 KB). Seria o menor JS (< 10 KB), TBT ≈ 0, mas reescreve os componentes interativos (Header, StatusBadge, StickyActionBar, Reveal, EmailLink, Location) e exige duplicar a lógica do menu e do foco preso (já validada aqui).
 
-## Checagem manual / por construção
-- Foco visível em tudo; menu mobile com `aria-expanded`, foco preso e `Esc`. Ordem de foco = ordem visual. Link "Ir para o conteúdo".
-- Alvos ≥ 48 px (chips, botões, barra fixa); botões pequenos 44 px.
-- Ícones decorativos `aria-hidden`; botões só com ícone têm `aria-label`.
-- Landmarks: header, nav, main, footer, aside. `lang="pt-BR"`. Um H1 por página.
-- Contraste: ver `design-system.md` (todos os pares ≥ AA).
-- `prefers-reduced-motion`: todas as animações e transições desligadas; conteúdo visível sem JS.
-- **Não verificado**: leitor de tela real (NVDA/VoiceOver) no seletor de sintomas e zoom 200% por inspeção manual. O carrossel de avaliações não é renderizado enquanto não houver autorização.
+### 5.5 Decisão pedida ao cliente
+| Opção | JS gzip | Esforço | Risco |
+|---|---|---|---|
+| A. Manter React 19 | 83,6 KB (71 KB br) | zero | descumpre 8.2 em 54 KB |
+| B. Alias Preact/compat | ~22 KB | pequeno | baixo a médio, TBT maior |
+| C. React só no SSG + vanilla | ~6 a 8 KB | médio | baixo, mais código a manter |
+
+## 6. Pendências
+1. Decisão sobre o JS (5.5). Em A, a meta "JS < 30 KB" fica formalmente reprovada.
+2. Medir no preview da Vercel (brotli, CDN) e repetir Lighthouse.
+3. Teste com leitor de tela real e dispositivos físicos.
+4. Hex dos tokens ainda `[CONFIRMAR]` com o logo original (se mudarem, rodar `scripts/contrast.mjs` e `audit:a11y` de novo).
+5. Quando o carrossel de avaliações for liberado, auditar pausa, foco e anúncio.
+6. Nota de processo: um `git status` somente leitura foi executado por engano durante o trabalho; nenhum outro comando git rodou e nada foi commitado.

@@ -17,7 +17,7 @@ export function SymptomPicker() {
             <span className="label">{copy.symptoms.countLabel}</span>
           </p>
         </div>
-        <Reveal as="ol" className="rows">
+        <Reveal as="ol" role="list" className="rows">
           {symptoms.map((s) => (
             <li key={s.id} className={`rowwrap${s.warning ? ' rowwrap--warn' : ''}`}>
               <a

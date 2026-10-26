@@ -15,7 +15,7 @@ export function SplitShieldSteps() {
             <Reveal key={h.id} className={`half half--${idx ? 'r' : 'l'}`}>
               <Emblem id={`half${idx}`} line half={idx ? 'right' : 'left'} className="half__art" />
               <h3 className="half__h">{h.title}</h3>
-              <ol className="steps" start={Number(h.steps[0].n)}>
+              <ol className="steps" role="list" start={Number(h.steps[0].n)}>
                 {h.steps.map((st) => (
                   <li key={st.n} className="step">
                     <span className="step__n" aria-hidden="true">{st.n}</span>

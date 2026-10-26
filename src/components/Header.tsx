@@ -96,7 +96,7 @@ export function Header({ home }: { home: boolean }) {
           {open ? copy.ui.close : copy.ui.menu}
         </button>
         <nav id="menu-panel" ref={panelRef} className="menu" aria-label={copy.ui.mainNav}>
-          <ol className="menu__list">
+          <ol className="menu__list" role="list">
             {nav.map((n, i) => (
               <li key={n.href}>
                 <a

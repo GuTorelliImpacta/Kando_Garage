@@ -24,6 +24,7 @@ interface Props {
   step?: number;
   children?: ReactNode;
   id?: string;
+  role?: string;
 }
 
 /** Entrada por IntersectionObserver. Sem JS (ou com movimento reduzido) o conteúdo já está visível: ver base.css. */

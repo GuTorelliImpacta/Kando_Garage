@@ -8,7 +8,7 @@ export function Gallery() {
       <div className="wrap">
         <p className="label label--amber">{G.caption}</p>
         <h2 id="gal-h" className="h2">{G.h2}</h2>
-        <ul className="gallery">
+        <ul className="gallery" role="list">
           {gallery.map((g) => (
             <li key={g.src}>
               <figure className="crop crop--4">

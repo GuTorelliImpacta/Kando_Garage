@@ -15,7 +15,7 @@ export function Differentials() {
             <span className="label">{copy.differentials.countLabel}</span>
           </p>
         </div>
-        <Reveal as="ol" className="rows rows--static">
+        <Reveal as="ol" role="list" className="rows rows--static">
           {D.items.map((it) => (
             <li key={it.n} className="rowwrap">
               <div className="row">
