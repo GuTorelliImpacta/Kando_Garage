@@ -11,3 +11,5 @@ Entregas:
 3. docs/brand-assets.md: lista dos SVGs a produzir (emblema com engrenagens em grupos animáveis, favicon, pin do mapa em escudo, ilustração 404, OG image) e as regras de uso do logo (área de respiro, tamanho mínimo, fundos permitidos).
 4. Tabela de contraste de todos os pares de cor usados.
 Regras: respeitar o logo existente, nunca redesenhá-lo. Laranja = ação, âmbar = marca. A experiência deve parecer premium e de confiança, nunca genérica de template.
+
+Regra de versão React (pedido do cliente): NENHUM ícone (sem mini-escudos com pictograma, sem Lucide, sem emoji). A linguagem visual é tipográfica e industrial: numeração, filetes, tabelas técnicas, texturas de metal, cantos retos. Faça um site de mecânica de respeito.
