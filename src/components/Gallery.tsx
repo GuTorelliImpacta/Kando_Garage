@@ -1,4 +1,4 @@
-import { gallery, gallerySection as G, links } from '../content/site';
+import { fichaCaption, gallery, gallerySection as G, links } from '../content/site';
 
 /** Galeria: só renderiza quando houver fotos reais em site.ts. */
 export function Gallery() {
@@ -6,7 +6,7 @@ export function Gallery() {
   return (
     <section id="galeria" className="sec dark-b grain" aria-labelledby="gal-h">
       <div className="wrap">
-        <p className="label label--amber">{G.caption}</p>
+        <p className="label label--amber">{fichaCaption('gallery')}</p>
         <h2 id="gal-h" className="h2">{G.h2}</h2>
         <ul className="gallery" role="list">
           {gallery.map((g) => (

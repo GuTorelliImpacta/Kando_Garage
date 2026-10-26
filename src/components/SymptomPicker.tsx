@@ -1,4 +1,4 @@
-import { copy, symptoms, symptomsSection as S, ui, wa } from '../content/site';
+import { copy, fichaCaption, symptoms, symptomsSection as S, ui, wa } from '../content/site';
 import { trk } from '../lib/track';
 import { Reveal } from './Reveal';
 
@@ -8,7 +8,7 @@ export function SymptomPicker() {
     <section id="sintomas" className="sec dark-b grain" aria-labelledby="sintomas-h">
       <div className="wrap split-cols">
         <div className="split-cols__side">
-          <p className="label label--amber">{S.caption}</p>
+          <p className="label label--amber">{fichaCaption('symptoms')}</p>
           <h2 id="sintomas-h" className="h2">{S.h2}</h2>
           <p className="lead">{S.sub}</p>
           <p className="fine">{S.micro}</p>

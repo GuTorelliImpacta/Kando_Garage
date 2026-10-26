@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { company, copy, links, reviews, reviewsSection as S } from '../content/site';
+import { company, copy, fichaCaption, links, reviews, reviewsSection as S } from '../content/site';
 import { prefersReducedMotion } from '../hooks/useMatchMedia';
 import { ReviewCard } from './ReviewCard';
 import { Reveal } from './Reveal';
@@ -40,7 +40,7 @@ export function Reviews() {
   return (
     <section id="avaliacoes" className="sec sec--flush-top paper" aria-labelledby="av-h">
       <div className="wrap">
-        <p className="label label--amber-l">{S.caption}</p>
+        <p className="label label--amber-l">{fichaCaption('reviews')}</p>
         <h2 id="av-h" className="h2">{S.h2}</h2>
         <div className={`rev${shown.length ? '' : ' rev--solo'}`}>
           <Reveal className="panel">

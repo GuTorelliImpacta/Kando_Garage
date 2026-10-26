@@ -1,4 +1,4 @@
-import { copy, differentials as D } from '../content/site';
+import { copy, fichaCaption, differentials as D } from '../content/site';
 import { Emblem } from './Emblem';
 import { Reveal } from './Reveal';
 
@@ -8,7 +8,7 @@ export function Differentials() {
       <Emblem id="difw" line half="left" className="watermark" />
       <div className="wrap split-cols">
         <div className="split-cols__side">
-          <p className="label label--amber">{D.caption}</p>
+          <p className="label label--amber">{fichaCaption('differentials')}</p>
           <h2 id="dif-h" className="h2">{D.h2}</h2>
           <p className="bignum" aria-hidden="true">
             <span className="bignum__n">{String(D.items.length).padStart(2, '0')}</span>

@@ -19,9 +19,9 @@ export function Hero() {
       <div className="wrap hero__grid">
         <div className="hero__copy">
           <dl className="osfields">
-            <Field k={copy.hero.osLabel} v={copy.hero.osNumber} />
             <Field k={copy.hero.placeLabel} v={copy.hero.placeValue} />
             <Field k={orderSheet.fields.vehicles} v={orderSheet.fields.vehiclesValue} />
+            <Field k={copy.hero.addressLabel} v={company.address.street} />
           </dl>
           <p className="eyebrow">{hero.eyebrow}</p>
           <h1 id="hero-h1" className="hero__h1">
@@ -39,7 +39,7 @@ export function Hero() {
           <div className="proof">
             <a className="proof__link" href={links.mapsReviews} target="_blank" rel="noopener noreferrer">
               <span className="proof__n num">{company.rating.value}</span>
-              <span className="proof__t">{copy.hero.proofText}</span>
+              <span className="proof__t">{copy.hero.proofLabel}</span>
             </a>
             <StatusBadge withSummary live />
           </div>

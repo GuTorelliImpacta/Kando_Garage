@@ -1,5 +1,4 @@
 import type { SVGProps } from 'react';
-import { copy } from '../content/site';
 
 // Emblema "Brasão da Confiança": escudo dividido, engrenagens à esquerda, chave inglesa e
 // chave de fenda cruzadas à direita. ILUSTRAÇÃO PROVISÓRIA fiel ao conceito do logo.
@@ -107,15 +106,15 @@ export function Emblem({ id, spin, loose, line, half, label, className = '', ...
 
 /**
  * Planta do escudo (desenho técnico em linha fina): contorno, eixo traço-ponto, circunferências
- * de primitiva das três engrenagens com rótulos Z=…, cotas sem valores. Decorativa e sem medidas reais.
+ * de primitiva das três engrenagens e cotas sem valores nem rótulos. Decorativa e sem medidas reais.
  */
 export function EmblemBlueprint({ id, className = '' }: { id: string; className?: string }) {
   const ox = 50;
   const oy = 36;
   const gears = [
-    { cx: 58, cy: 80, r: 27, z: copy.drawing.teeth[0] },
-    { cx: 76, cy: 128, r: 19, z: copy.drawing.teeth[1] },
-    { cx: 52, cy: 160, r: 22, z: copy.drawing.teeth[2] },
+    { cx: 58, cy: 80, r: 27 },
+    { cx: 76, cy: 128, r: 19 },
+    { cx: 52, cy: 160, r: 22 },
   ];
   return (
     <svg className={`bp ${className}`.trim()} viewBox="0 0 300 340" aria-hidden="true" focusable="false">
@@ -134,11 +133,6 @@ export function EmblemBlueprint({ id, className = '' }: { id: string; className?
         {/* cota vertical */}
         <path className="draw" pathLength="1" d="M254 36h30M254 268h30M278 36V268" />
         <path d="M273 36h10M273 268h10" />
-      </g>
-      <g className="bp__txt" fill="currentColor">
-        {gears.map((g, i) => (
-          <text key={i} x="4" y={g.cy + oy - 5}>{g.z}</text>
-        ))}
       </g>
     </svg>
   );

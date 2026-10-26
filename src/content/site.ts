@@ -138,17 +138,17 @@ export const orderSheet = {
   diagnosis: 'Diagnóstico',
   execution: 'Execução',
   split: 'Diagnóstico / Execução',
-  /** Rótulos de legenda por seção (eyebrow/caption) */
+  /** Rótulos de legenda por seção. O número da ficha é calculado por fichaCaption() só entre as seções visíveis. */
   captions: {
-    symptoms: 'Ficha 01 · Sintoma relatado',
-    services: 'Ficha 02 · Serviços e diagnósticos',
-    how: 'Ficha 03 · Do diagnóstico à entrega',
-    revision: 'Ficha 04 · Revisão periódica',
-    differentials: 'Ficha 05 · Por que voltam e indicam',
-    reviews: 'Ficha 06 · Registro de clientes',
-    gallery: 'Ficha 07 · Bancada e elevador',
-    faq: 'Ficha 08 · Dúvidas comuns',
-    location: 'Ficha 09 · Onde fica a oficina',
+    symptoms: 'Sintoma relatado',
+    services: 'Serviços e diagnósticos',
+    how: 'Do diagnóstico à entrega',
+    revision: 'Revisão periódica',
+    reviews: 'Registro de clientes',
+    differentials: 'Por que voltam e indicam',
+    gallery: 'Bancada e elevador',
+    faq: 'Dúvidas comuns',
+    location: 'Onde fica a oficina',
     cta: 'Abrir ordem de serviço',
   },
   /** Chamadas curtas para links/botões em cartões numerados */
@@ -171,6 +171,23 @@ export const orderSheet = {
     shown: 'Peça mostrada',
   },
 } as const;
+
+export type FichaKey = 'symptoms' | 'services' | 'how' | 'revision' | 'reviews' | 'differentials' | 'gallery' | 'faq' | 'location';
+
+/** Ordem em que as fichas aparecem na página (src/pages/Home.tsx). */
+const fichaOrder: FichaKey[] = ['symptoms', 'services', 'how', 'revision', 'reviews', 'differentials', 'gallery', 'faq', 'location'];
+
+function fichaVisible(k: FichaKey): boolean {
+  if (k === 'gallery') return gallery.length > 0;
+  if (k === 'faq') return faq.some((f) => f.confirmed && f.a.trim());
+  return true;
+}
+
+/** 'Ficha 03 · Do diagnóstico à entrega': numeração contínua só entre as seções realmente renderizadas. */
+export function fichaCaption(k: FichaKey): string {
+  const n = fichaOrder.filter(fichaVisible).indexOf(k) + 1;
+  return `Ficha ${String(n).padStart(2, '0')} · ${orderSheet.captions[k]}`;
+}
 
 /** 'Item 01' */
 export function itemLabel(n: string): string {
@@ -203,13 +220,6 @@ export const hero = {
   sheetLabel: 'Ordem de serviço · Kando Garage',
 };
 
-export const trust = [
-  { n: '01', title: '5,0 ★ no Google', text: '68 avaliações' },
-  { n: '02', title: 'Peça trocada, peça mostrada', text: 'Você vê tudo' },
-  { n: '03', title: 'Orçamento antes de mexer', text: 'Só fazemos o que você aprovar' },
-  { n: '04', title: 'Nacionais e importados', text: 'Diagnóstico com equipamento' },
-];
-
 // ---------------------------------------------------------------- sintomas
 export interface Symptom {
   id: string;
@@ -223,7 +233,6 @@ export interface Symptom {
 }
 
 export const symptomsSection = {
-  caption: orderSheet.captions.symptoms,
   h2: 'O que seu carro está fazendo?',
   sub: 'Toque no sintoma e fale direto com a gente no WhatsApp. A mensagem já vai pronta.',
   micro: 'Não sabe explicar? Tudo bem. Manda um áudio ou um vídeo do barulho no WhatsApp que a gente te ajuda.',
@@ -258,12 +267,9 @@ export interface Service {
   title: string;
   text: string;
   message: string;
-  /** 'oficial' = texto da própria empresa (WhatsApp Business); 'clientes' = citado nas avaliações */
-  source: 'oficial' | 'clientes';
 }
 
 export const servicesSection = {
-  caption: orderSheet.captions.services,
   h2: 'Mecânica geral, preventiva e especializada',
   intro: 'Trabalhamos com veículos nacionais e importados, com serviço e diagnóstico em todas estas áreas:',
   introNote:
@@ -276,15 +282,15 @@ export const servicesSection = {
 const svcMsg = (what: string) => `Olá! Vim pelo site. Gostaria de falar sobre ${what}. Podem avaliar?`;
 
 export const services: Service[] = [
-  { id: 'injecao', n: '01', title: 'Injeção eletrônica', text: 'Diagnóstico com scanner para falhas, perda de potência, consumo alto e luz da injeção acesa.', message: svcMsg('injeção eletrônica'), source: 'oficial' },
-  { id: 'motor', n: '02', title: 'Motor', text: 'Ruídos, vazamentos, superaquecimento, correias e manutenção completa do motor.', message: svcMsg('o motor do meu carro'), source: 'oficial' },
-  { id: 'cambio', n: '03', title: 'Câmbio', text: 'Marchas arranhando, trancos, câmbio pesado ou ruidoso. Diagnóstico e reparo de câmbio para nacionais e importados.', message: svcMsg('o câmbio do meu carro'), source: 'oficial' },
-  { id: 'suspensao', n: '04', title: 'Suspensão', text: 'Amortecedores, molas, buchas e terminais. Fim do barulho e mais estabilidade.', message: svcMsg('a suspensão do meu carro'), source: 'oficial' },
-  { id: 'freios', n: '05', title: 'Freios', text: 'Pastilhas, discos, fluido e diagnóstico de ruídos e pedal mole. Segurança em primeiro lugar.', message: svcMsg('os freios do meu carro'), source: 'oficial' },
-  { id: 'airbag', n: '06', title: 'Airbag', text: 'Diagnóstico da luz do airbag acesa e do sistema de segurança do veículo.', message: svcMsg('o airbag do meu carro'), source: 'oficial' },
-  { id: 'revisoes', n: '07', title: 'Revisões periódicas', text: 'Seguimos a agenda de revisão do seu veículo, sem empurrar serviço desnecessário.', message: 'Olá! Vim pelo site. Quero agendar a revisão do meu carro. Modelo/ano/km: ', source: 'oficial' },
-  { id: 'arrefecimento', n: '08', title: 'Arrefecimento', text: 'Limpeza do sistema, radiador, mangueiras e controle de temperatura.', message: svcMsg('o sistema de arrefecimento'), source: 'clientes' },
-  { id: 'combustivel', n: '09', title: 'Sistema de combustível', text: 'Diagnóstico e correção de vazamentos e falhas na alimentação.', message: svcMsg('o sistema de combustível'), source: 'clientes' },
+  { id: 'injecao', n: '01', title: 'Injeção eletrônica', text: 'Diagnóstico com scanner para falhas, perda de potência, consumo alto e luz da injeção acesa.', message: svcMsg('injeção eletrônica') },
+  { id: 'motor', n: '02', title: 'Motor', text: 'Ruídos, vazamentos, superaquecimento, correias e manutenção completa do motor.', message: svcMsg('o motor do meu carro') },
+  { id: 'cambio', n: '03', title: 'Câmbio', text: 'Marchas arranhando, trancos, câmbio pesado ou ruidoso. Diagnóstico e reparo de câmbio para nacionais e importados.', message: svcMsg('o câmbio do meu carro') },
+  { id: 'suspensao', n: '04', title: 'Suspensão', text: 'Amortecedores, molas, buchas e terminais. Fim do barulho e mais estabilidade.', message: svcMsg('a suspensão do meu carro') },
+  { id: 'freios', n: '05', title: 'Freios', text: 'Pastilhas, discos, fluido e diagnóstico de ruídos e pedal mole. Segurança em primeiro lugar.', message: svcMsg('os freios do meu carro') },
+  { id: 'airbag', n: '06', title: 'Airbag', text: 'Diagnóstico da luz do airbag acesa e do sistema de segurança do veículo.', message: svcMsg('o airbag do meu carro') },
+  { id: 'revisoes', n: '07', title: 'Revisões periódicas', text: 'Seguimos a agenda de revisão do seu veículo, sem empurrar serviço desnecessário.', message: 'Olá! Vim pelo site. Quero agendar a revisão do meu carro. Modelo/ano/km: ' },
+  { id: 'arrefecimento', n: '08', title: 'Arrefecimento', text: 'Limpeza do sistema, radiador, mangueiras e controle de temperatura.', message: svcMsg('o sistema de arrefecimento') },
+  { id: 'combustivel', n: '09', title: 'Sistema de combustível', text: 'Diagnóstico e correção de vazamentos e falhas na alimentação.', message: svcMsg('o sistema de combustível') },
 ];
 
 // ---------------------------------------------------------------- como trabalhamos
@@ -296,7 +302,6 @@ export interface Step {
 }
 
 export const how = {
-  caption: orderSheet.captions.how,
   h2: 'Transparência do diagnóstico à entrega',
   intro: 'É assim com qualquer carro que entra aqui.',
   halves: [
@@ -320,7 +325,7 @@ export const how = {
     },
   ],
   highlight: {
-    title: 'Peça trocada, peça mostrada',
+    title: 'Cada peça trocada é mostrada a você',
     text: 'É um elogio que aparece sempre nas avaliações, e virou promessa: você vê cada peça substituída e entende o que foi feito no seu carro.',
     // CONFIRMAR autorização para exibir o trecho da avaliação
     quote: {
@@ -332,7 +337,6 @@ export const how = {
 };
 
 export const revision = {
-  caption: orderSheet.captions.revision,
   h2: 'Revisão conforme a agenda do seu carro',
   text: 'Seu manual tem uma agenda de revisões por km ou tempo. A gente segue a agenda do seu carro, sem empurrar serviço que ele ainda não precisa.',
   cta: 'Agendar minha revisão',
@@ -347,10 +351,9 @@ export interface Differential {
 }
 
 export const differentials = {
-  caption: orderSheet.captions.differentials,
   h2: 'Por que os clientes voltam e indicam',
   items: [
-    { n: '01', title: 'Honestidade comprovada', text: '5,0 no Google em 68 avaliações.' },
+    { n: '01', title: 'Honestidade comprovada', text: 'Nota 5,0 no Google em 68 avaliações.' },
     { n: '02', title: 'Preço justo', text: 'Orçamento claro, sem troca desnecessária.' },
     { n: '03', title: 'A gente explica', text: 'Você entende o que acontece com o seu carro, sem “mecaniquês”.' },
     { n: '04', title: 'Ambiente limpo e confortável', text: 'Área de descanso com cafezinho enquanto você espera.' },
@@ -366,7 +369,6 @@ export interface Review extends Confirmable {
 }
 
 export const reviewsSection = {
-  caption: orderSheet.captions.reviews,
   h2: 'Quem já deixou o carro em boas mãos',
   seal: 'avaliações no Google',
   seeAll: 'Ver todas no Google',
@@ -393,7 +395,6 @@ export interface GalleryItem {
   caption: string;
 }
 export const gallerySection = {
-  caption: orderSheet.captions.gallery,
   h2: 'Por dentro da garagem',
   cta: 'Acompanhe no Instagram @kando_garage',
 };
@@ -405,7 +406,7 @@ export interface Faq extends Confirmable {
   q: string;
   a: string;
 }
-export const faqSection = { caption: orderSheet.captions.faq, h2: 'Perguntas frequentes' };
+export const faqSection = { h2: 'Perguntas frequentes' };
 export const faq: Faq[] = [
   { confirmed: true, q: 'Vocês atendem carros importados?', a: 'Sim. Trabalhamos com veículos nacionais e importados, com serviço e diagnóstico em injeção eletrônica, motor, câmbio, suspensão, freios e airbag. Atendemos toda a Zona Norte.' },
   { confirmed: true, q: 'Vocês mostram as peças trocadas?', a: 'Sim. Todas as peças substituídas são mostradas na entrega.' },
@@ -422,7 +423,6 @@ export const faq: Faq[] = [
 
 // ---------------------------------------------------------------- local
 export const location = {
-  caption: orderSheet.captions.location,
   h2: 'Venha nos visitar no Tremembé',
   intro: 'A Kando Garage é uma oficina mecânica no Tremembé, na Zona Norte de São Paulo. Atendemos moradores e quem trabalha na região, com mecânica geral, preventiva e especializada para carros nacionais e importados.',
   hoursTitle: 'Horário de funcionamento',
@@ -504,22 +504,20 @@ export const copy = {
     mapTitle: 'Mapa: Kando Garage, R. Mamud Rahd, 202, Tremembé',
   },
   hero: {
-    osLabel: 'OS',
-    osNumber: 'Nº 0001 / 2026',
     placeLabel: 'Bairro',
-    placeValue: 'Tremembé · SP',
-    proofText: 'De 5,0 no Google · 68 avaliações',
-    legend: 'Esc. 1:1 · Det. A · Folha 01/04',
-  },
-  /** Rótulos do desenho técnico (decorativos; não representam medidas reais). */
-  drawing: {
-    teeth: ['Z=24', 'Z=18', 'Z=12'],
+    placeValue: 'Tremembé',
+    addressLabel: 'Endereço',
+    /** Texto completo (usado também no og.jpg) */
+    proofText: 'Nota 5,0 no Google · 68 avaliações',
+    /** Na home o 5,0 aparece em destaque ao lado, então o rótulo não repete o número */
+    proofLabel: 'Nota no Google · 68 avaliações',
+    legend: 'Ordem de serviço · Kando Garage',
   },
   trustBar: {
-    caption: 'Ficha de confiança · Rev. 2026',
+    caption: 'Ficha de confiança',
     items: [
       { head: '5,0', label: 'Nota no Google', text: '68 avaliações' },
-      { head: 'Peça trocada, peça mostrada', label: '', text: 'Você vê tudo' },
+      { head: 'Peças à vista na entrega', label: '', text: 'Você vê o que foi substituído' },
       { head: 'Orçamento antes de mexer', label: '', text: 'Só fazemos o que você aprovar' },
       { head: 'Nacionais e importados', label: '', text: 'Diagnóstico com equipamento' },
     ],
@@ -527,19 +525,16 @@ export const copy = {
   symptoms: { countLabel: 'Sintomas' },
   services: {
     tableCaption: 'Serviços · tabela de especificação',
-    cols: { n: 'Nº', service: 'Serviço', what: 'O que atendemos', source: 'Origem', action: 'Ação' },
-    sourceLabels: { oficial: 'Oficial', clientes: 'Citado por clientes' },
+    cols: { n: 'Nº', service: 'Serviço', what: 'O que atendemos', action: 'Ação' },
   },
   partTag: {
-    number: 'Peça Nº 01',
-    dateLabel: 'Data',
     promiseLabel: 'A promessa',
     rulerStart: 'Km',
     rulerEnd: 'Tempo',
   },
   differentials: { countLabel: 'Motivos' },
-  reviews: { panelLine: 'De 5,0 · 68 avaliações no Google', source: 'Cliente · Avaliação no Google' },
-  faq: { open: 'Abrir', close: 'Fechar', more: 'Outra dúvida? É só chamar no WhatsApp.' },
+  reviews: { panelLine: 'Nota no Google · 68 avaliações', source: 'Cliente · Avaliação no Google' },
+  faq: { open: 'Abrir', close: 'Fechar', openMark: '+', closeMark: '\u2212', more: 'Outra dúvida? É só chamar no WhatsApp.' },
   location: {
     addressLabel: 'Endereço',
     coords: 'Coordenadas',

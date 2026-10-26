@@ -1,4 +1,4 @@
-import { copy, servicesSection as S, services } from '../content/site';
+import { copy, fichaCaption, servicesSection as S, services } from '../content/site';
 import { Reveal } from './Reveal';
 import { ServiceRow } from './ServiceRow';
 import { WaLink } from './WaLink';
@@ -8,7 +8,7 @@ export function ServiceTable() {
   return (
     <section id="servicos" className="sec paper" aria-labelledby="servicos-h">
       <div className="wrap">
-        <p className="label label--amber-l">{S.caption}</p>
+        <p className="label label--amber-l">{fichaCaption('services')}</p>
         <h2 id="servicos-h" className="h2">{S.h2}</h2>
         <p className="lead">{S.intro}</p>
         <Reveal className="sheet">
@@ -19,7 +19,6 @@ export function ServiceTable() {
                 <th scope="col">{c.n}</th>
                 <th scope="col">{c.service}</th>
                 <th scope="col">{c.what}</th>
-                <th scope="col">{c.source}</th>
                 <th scope="col">{c.action}</th>
               </tr>
             </thead>

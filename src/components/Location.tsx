@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { company, copy, hours, links, location as L, ui } from '../content/site';
+import { company, copy, fichaCaption, hours, links, location as L, ui } from '../content/site';
 import { useClock } from '../hooks/useClock';
 import { coord } from '../lib/track';
 import { EmailLink } from './EmailLink';
@@ -18,7 +18,7 @@ export function Location() {
       <div className="wrap">
        <div className="loc">
         <div className="loc__info">
-          <p className="label label--amber-l">{L.caption}</p>
+          <p className="label label--amber-l">{fichaCaption('location')}</p>
           <h2 id="loc-h" className="h2">{L.h2}</h2>
           <p className="fine fine--l">{L.intro}</p>
 

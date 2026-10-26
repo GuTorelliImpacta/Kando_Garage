@@ -1,4 +1,4 @@
-import { how } from '../content/site';
+import { fichaCaption, how } from '../content/site';
 import { Emblem } from './Emblem';
 import { Reveal } from './Reveal';
 
@@ -7,7 +7,7 @@ export function SplitShieldSteps() {
   return (
     <section id="como-trabalhamos" className="sec dark-a grain" aria-labelledby="como-h">
       <div className="wrap">
-        <p className="label label--amber">{how.caption}</p>
+        <p className="label label--amber">{fichaCaption('how')}</p>
         <h2 id="como-h" className="h2">{how.h2}</h2>
         <p className="lead">{how.intro}</p>
         <div className="shield-split">

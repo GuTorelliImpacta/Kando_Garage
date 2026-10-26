@@ -1,4 +1,4 @@
-import { copy, how, partTag, revision, wa } from '../content/site';
+import { copy, fichaCaption, how, partTag, revision, wa } from '../content/site';
 import { Reveal } from './Reveal';
 import { WaLink } from './WaLink';
 
@@ -11,7 +11,7 @@ export function PartTag() {
         <Reveal className="tag">
           <div className="tag__hazard hazard" aria-hidden="true" />
           <div className="tag__body crop crop--4">
-            <p className="tag__kicker label">{partTag.kicker} · {copy.partTag.number}</p>
+            <p className="tag__kicker label">{partTag.kicker}</p>
             <dl className="tag__lines">
               {partTag.lines.map((l) => (
                 <div key={l.k} className="tag__line">
@@ -19,10 +19,6 @@ export function PartTag() {
                   <dd>{l.v}</dd>
                 </div>
               ))}
-              <div className="tag__line tag__line--blank">
-                <dt>{copy.partTag.dateLabel}</dt>
-                <dd aria-hidden="true">&nbsp;</dd>
-              </div>
             </dl>
             <p className="tag__title">{partTag.title}.</p>
             <p className="tag__stamp label">{partTag.stamp}</p>
@@ -44,7 +40,7 @@ export function PartTag() {
       <div className="wrap">
         <Reveal className="revisao">
           <div>
-            <p className="label">{revision.caption}</p>
+            <p className="label">{fichaCaption('revision')}</p>
             <h3 className="revisao__h">{revision.h2}</h3>
             <p className="revisao__t">{revision.text}</p>
             <a className="btn btn--dark" href={wa(revision.message)} target="_blank" rel="noopener noreferrer">
