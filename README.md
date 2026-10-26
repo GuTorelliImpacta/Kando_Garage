@@ -28,10 +28,12 @@ node scripts/contrast.mjs '[["nome","#fff","#000"]]'
 ```
 
 ## Deploy (Vercel ou Netlify)
-1. Importe o repositório (framework Vite; build `npm run build`; saída `dist`).
-2. Defina a variável `VITE_SITE_URL` com o domínio final (ex.: `https://kandogarage.com.br`). Ela alimenta canonical, sitemap, robots, Open Graph e JSON-LD (lida no build).
-3. Headers de segurança: já em `vercel.json` (Vercel) e `public/_headers` (Netlify).
-4. Domínio: adicione-o no painel, aponte `A 76.76.21.21` (apex) e `CNAME cname.vercel-dns.com` (www) na Vercel, ou o equivalente do provedor. HTTPS é emitido automaticamente.
-5. Depois do deploy: validar JSON-LD (Rich Results Test), headers (securityheaders.com, Mozilla Observatory) e rodar o Lighthouse mobile.
+1. Importe o repositório. Framework: Vite. Build command: `npm run build`. Output directory: `dist`. Node >= 22.12.
+2. Variável de ambiente `VITE_SITE_URL` (Production e Preview) com o domínio final, sem barra no fim (ex.: `https://kandogarage.com.br`). Alimenta canonical, og:url, sitemap, robots e JSON-LD, lida no build. Sem ela vale o padrão `https://kandogarage.com.br`; em previews os canonicals apontam para o domínio de produção (esperado).
+3. Headers de segurança e cache: já em `vercel.json` (Vercel) e `public/_headers` (Netlify). `cleanUrls` e `trailingSlash: false` fazem `/politica-de-privacidade` servir `politica-de-privacidade.html`; `404.html` é usado automaticamente (status 404). Na Netlify as "pretty URLs" têm o mesmo efeito.
+4. Domínio (somente com aprovação do cliente): adicione-o no painel do provedor e crie no DNS `A 76.76.21.21` (apex) e `CNAME cname.vercel-dns.com` (www) na Vercel, ou os registros que a Netlify indicar. Redirecione www para o apex (ou o inverso) no painel. HTTPS (Let's Encrypt) é emitido automaticamente depois que o DNS propaga.
+5. HSTS usa `includeSubDomains; preload`: só submeta o domínio a hstspreload.org depois de confirmar que o domínio e todos os subdomínios servem HTTPS de forma estável (a inclusão é praticamente irreversível).
+6. `public/.well-known/security.txt`: trocar o contato pelo definitivo da Toss Lab e remover as linhas `# CONFIRMAR`; renovar `Expires` antes de 30/06/2027.
+7. Depois do deploy: validar JSON-LD (Rich Results Test), headers (securityheaders.com, Mozilla Observatory), clicar em "Carregar mapa interativo" (confirma `frame-src`) e rodar o Lighthouse mobile.
 
 **Nada foi publicado em produção nem teve DNS alterado.** Publicar só com aprovação do cliente.

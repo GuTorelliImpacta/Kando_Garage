@@ -1,5 +1,6 @@
-# CONFIRMAR: trocar pelo contato de segurança da Toss Lab quando definido.
+# CONFIRMAR antes do go-live (Toss Lab): contato de seguranca definitivo e dominio final.
+# Remover estas linhas de comentario quando confirmado.
 Contact: mailto:kandogarage@gmail.com
-Expires: 2027-10-26T00:00:00.000Z
+Expires: 2027-06-30T23:59:59.000Z
 Preferred-Languages: pt, en
 Canonical: https://kandogarage.com.br/.well-known/security.txt
