@@ -1,0 +1,10 @@
+---
+import { reviewsSection, type Review } from '../content/site';
+interface Props { r: Review }
+const { r } = Astro.props;
+---
+<li class="rv-card">
+  <span class="stars" aria-hidden="true" style="color:var(--brand)">★★★★★</span>
+  <blockquote><p>“{r.text}”</p></blockquote>
+  <footer>{r.author} · {reviewsSection.source}</footer>
+</li>

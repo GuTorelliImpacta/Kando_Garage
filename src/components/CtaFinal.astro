@@ -1,0 +1,15 @@
+---
+import Emblem from './Emblem.astro';
+import Icon from './Icon.astro';
+import StatusBadge from './StatusBadge.astro';
+import { ctaFinal, ui, waDefault } from '../content/site';
+---
+<section class="section sec-dark cta-final warm-glow grain" aria-labelledby="cta-h">
+  <Emblem id="cta" class="emblem-bg" />
+  <div class="wrap reveal">
+    <h2 id="cta-h">{ctaFinal.h2}</h2>
+    <p class="lead">{ctaFinal.text}</p>
+    <a class="btn btn-primary btn-lg" href={waDefault} target="_blank" rel="noopener noreferrer" data-track="click_whatsapp" data-origem="cta_final"><Icon name="whatsapp" />{ui.ctaWhatsappNow}</a>
+    <StatusBadge />
+  </div>
+</section>

@@ -1,0 +1,27 @@
+---
+import Emblem from './Emblem.astro';
+import Icon from './Icon.astro';
+import StatusBadge from './StatusBadge.astro';
+import { hero, ui, waDefault, company, links } from '../content/site';
+---
+<section class="hero section sec-dark warm-glow grain diamond" id="inicio" aria-labelledby="h1">
+  <Emblem id="hbg" class="emblem-bg" />
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow">{hero.eyebrow}</p>
+      <h1 id="h1">Seu carro em <em>boas mãos.</em></h1>
+      <p class="hero-sub">{hero.sub}</p>
+      <a class="hero-proof" href={links.mapsReviews} target="_blank" rel="noopener noreferrer">
+        <span class="stars" aria-hidden="true">★★★★★</span>
+        <b class="hero-proof-n">{company.rating.value}</b>
+        <span>{hero.proof} · {company.rating.count} avaliações</span>
+      </a>
+      <div class="hero-cta">
+        <a class="btn btn-primary btn-lg" href={waDefault} target="_blank" rel="noopener noreferrer" data-track="click_whatsapp" data-origem="hero"><Icon name="whatsapp" />{ui.ctaWhatsapp}</a>
+        <a class="btn btn-ghost btn-lg" href="#sintomas">{hero.ctaSecondary}</a>
+      </div>
+      <StatusBadge />
+    </div>
+    <Emblem id="hero" class="hero-art" spin label="Emblema da Kando Garage: escudo com engrenagens, chave inglesa e chave de fenda" />
+  </div>
+</section>

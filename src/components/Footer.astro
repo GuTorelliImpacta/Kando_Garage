@@ -1,0 +1,42 @@
+---
+import Emblem from './Emblem.astro';
+import Icon from './Icon.astro';
+import { company, hours, footer, links, ui, waDefault } from '../content/site';
+const a = company.address;
+const year = new Date().getFullYear();
+---
+<footer class="site-footer sec-dark diamond" data-footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <Emblem id="ft" class="w-12 h-auto" />
+          <span class="brand-name">Kando <small>Garage</small></span>
+        </div>
+        <p class="slogan">{company.slogan}</p>
+        <div class="actions foot-actions" style="margin-top:18px">
+          <a class="btn btn-primary btn-sm" href={waDefault} target="_blank" rel="noopener noreferrer" data-track="click_whatsapp" data-origem="rodape"><Icon name="whatsapp" size={18} />{ui.ctaWhatsapp}</a>
+        </div>
+      </div>
+      <div>
+        <h2>{footer.contactTitle}</h2>
+        <ul>
+          <li><a href={links.maps} target="_blank" rel="noopener noreferrer" data-track="click_directions" data-origem="rodape">{a.street}<br />{a.district}, {a.city}/{a.region}, {a.zip}</a></li>
+          <li><a href={links.tel} data-track="click_call" data-origem="rodape">{company.phoneDisplay}</a></li>
+          <li><a href="#email" data-email data-track="click_email" data-origem="rodape"><span data-email-text>kandogarage (arroba) gmail.com</span></a></li>
+          <li><a href={links.instagram} target="_blank" rel="noopener noreferrer" data-track="click_instagram" data-origem="rodape">{company.instagram.handle}</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>{footer.hoursTitle}</h2>
+        <ul>{hours.table.map((r) => <li>{r.label}: {r.text}</li>)}</ul>
+        <p class="note" style="margin-top:8px">{hours.holidayNote}</p>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© <span data-year>{year}</span> {company.name} · Site por {company.credit.name}</span>
+      {company.cnpj.confirmed && <span>CNPJ {company.cnpj.value}</span>}
+      <a href="/politica-de-privacidade">{footer.privacy}</a>
+    </div>
+  </div>
+</footer>

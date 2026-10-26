@@ -1,0 +1,49 @@
+---
+import Icon from './Icon.astro';
+import StatusBadge from './StatusBadge.astro';
+import MapArt from './MapArt.astro';
+import { company, hours, location, links, ui, waDefault } from '../content/site';
+const a = company.address;
+---
+<section class="section sec-light" id="onde-estamos" aria-labelledby="onde-h">
+  <div class="wrap">
+    <div class="sec-head reveal"><h2 id="onde-h">{location.h2}</h2></div>
+    <div class="loc-grid">
+      <div class="loc-info reveal">
+        <address class="addr">
+          <a href={links.maps} target="_blank" rel="noopener noreferrer" data-track="click_directions" data-origem="endereco">{a.street}, {a.district}, {a.city}/{a.region}, {a.zip}</a>
+        </address>
+        <StatusBadge />
+        <p class="eyebrow" aria-hidden="true" style="margin-bottom:-12px">{location.hoursTitle}</p>
+        <table class="hours">
+          <caption class="sr-only">{location.hoursTitle}</caption>
+          <tbody>
+            {hours.table.map((r) => (
+              <tr data-days={r.days.join(',')}><th scope="row">{r.label}</th><td>{r.text}</td></tr>
+            ))}
+          </tbody>
+        </table>
+        <p class="note">{hours.holidayNote}</p>
+        <div>
+          <h3 style="font-size:1.4rem">{location.areaTitle}</h3>
+          <ul class="areas">{location.area.map((x) => <li>{x}</li>)}</ul>
+          <p class="note" style="margin-top:8px">{location.areaTail}</p>
+        </div>
+        <div class="actions">
+          <a class="btn btn-primary" href={waDefault} target="_blank" rel="noopener noreferrer" data-track="click_whatsapp" data-origem="local"><Icon name="whatsapp" size={20} />{ui.ctaWhatsapp}</a>
+          <a class="btn btn-ghost" href={links.tel} data-track="click_call" data-origem="local"><Icon name="phone" size={20} />{ui.call}</a>
+          <a class="btn btn-ghost" href={links.maps} target="_blank" rel="noopener noreferrer" data-track="click_directions" data-origem="local"><Icon name="pin" size={20} />{ui.directions}</a>
+          <a class="btn btn-ghost" href="#email" data-email data-track="click_email" data-origem="local" aria-label="Enviar e-mail"><Icon name="mail" size={20} />{ui.email}</a>
+        </div>
+      </div>
+      <div class="map reveal" data-map data-src={links.mapsEmbed}>
+        <MapArt />
+        <div class="map-ui">
+          <a class="btn btn-primary btn-sm" href={links.maps} target="_blank" rel="noopener noreferrer" data-track="click_directions" data-origem="mapa"><Icon name="pin" size={18} />{location.openMaps}</a>
+          <button class="btn btn-ghost btn-sm" type="button" data-map-load>{location.loadMap}</button>
+          <p class="note">{location.mapNote}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

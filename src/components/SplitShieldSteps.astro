@@ -1,0 +1,32 @@
+---
+import MiniShield from './MiniShield.astro';
+import Emblem from './Emblem.astro';
+import { how } from '../content/site';
+let n = 0;
+const halves = how.halves.map((h) => ({ ...h, steps: h.steps.map((s) => ({ ...s, n: ++n })) }));
+const q = how.highlight.quote;
+---
+<div class="split reveal">
+  {halves.map((h, i) => (
+    <>
+      {i === 1 && <div class="split-div" aria-hidden="true"></div>}
+      <section class="split-half" aria-labelledby={`half-${h.id}`}>
+        <header><MiniShield icon={h.icon} large /><h3 id={`half-${h.id}`}>{h.title}</h3></header>
+        <ol class="steps" start={h.steps[0].n}>
+          {h.steps.map((s) => (
+            <li class="step"><span class="step-n" aria-hidden="true">{s.n}</span><div><h4>{s.title}</h4><p>{s.text}</p></div></li>
+          ))}
+        </ol>
+      </section>
+    </>
+  ))}
+</div>
+<div class="highlight reveal">
+  <div style="display:grid;gap:18px">
+    <h3>{how.highlight.title}</h3>
+    <p>{how.highlight.text}</p>
+    {/* CONFIRMAR autorização: o trecho só aparece quando confirmed = true */}
+    {q.confirmed && <blockquote><p>{q.text}</p><cite>{q.author}</cite></blockquote>}
+  </div>
+  <Emblem id="hl" class="seal" />
+</div>

@@ -1,0 +1,14 @@
+{
+  "name": "Kando Garage",
+  "short_name": "Kando Garage",
+  "description": "Mecânica geral, preventiva e especializada no Tremembé, Zona Norte de SP.",
+  "lang": "pt-BR",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#141516",
+  "theme_color": "#141516",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "/logo.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

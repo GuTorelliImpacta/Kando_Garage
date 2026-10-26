@@ -1,0 +1,5 @@
+# CONFIRMAR: trocar pelo contato de segurança da Toss Lab quando definido.
+Contact: mailto:kandogarage@gmail.com
+Expires: 2027-10-26T00:00:00.000Z
+Preferred-Languages: pt, en
+Canonical: https://kandogarage.com.br/.well-known/security.txt

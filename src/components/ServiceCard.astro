@@ -1,0 +1,15 @@
+---
+import MiniShield from './MiniShield.astro';
+import Icon from './Icon.astro';
+import { servicesSection, wa, type Service } from '../content/site';
+interface Props { s: Service }
+const { s } = Astro.props;
+---
+<article class="card reveal">
+  <MiniShield icon={s.icon} large />
+  <h3>{s.title}</h3>
+  <p>{s.text}</p>
+  <a class="link-arrow" href={wa(s.message)} target="_blank" rel="noopener noreferrer" data-track="click_whatsapp" data-origem="servico" data-item={s.id} aria-label={`${servicesSection.link}: ${s.title}`}>
+    {servicesSection.link}<Icon name="arrow" size={18} />
+  </a>
+</article>
