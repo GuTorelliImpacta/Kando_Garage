@@ -389,7 +389,7 @@ export const how = {
 
 export const revision = {
   h2: 'Revisão conforme a agenda do seu carro',
-  text: 'Seu manual traz uma agenda de revisões por km ou tempo. Seguimos essa agenda, sem empurrar serviço de que o carro não precisa.',
+  text: 'Seguimos a agenda do manual, por km ou tempo, sem empurrar serviço de que o carro não precisa.',
   cta: ctas.revision.label,
   message: msgRevision,
 };
@@ -491,7 +491,7 @@ export interface Faq extends Confirmable {
 }
 export const faqSection = { h2: 'Perguntas frequentes' };
 export const faq: Faq[] = [
-  { confirmed: true, q: 'Vocês atendem carros importados?', a: 'Sim, nacionais e importados. Diagnóstico de injeção, motor, câmbio, suspensão, freios e airbag, para toda a Zona Norte.' },
+  { confirmed: true, q: 'Vocês atendem carros importados?', a: 'Sim, nacionais e importados, de toda a Zona Norte: injeção, motor, câmbio, suspensão, freios e airbag.' },
   { confirmed: true, q: 'Vocês mostram as peças trocadas?', a: 'Sim. Todas as peças substituídas são mostradas na entrega.' },
   // CONFIRMAR se atende sem agendamento
   { confirmed: true, q: 'Preciso agendar?', a: 'Recomendamos chamar no WhatsApp antes, para garantir o melhor horário.' },
@@ -512,7 +512,7 @@ export const location = {
   today: 'hoje',
   areaTitle: 'Atendemos toda a Zona Norte',
   area: ['Tremembé', 'Jardim Tremembé', 'Tucuruvi', 'Mandaqui', 'Jaçanã', 'Vila Irmãos Arnoni', 'Horto Florestal'],
-  areaTail: 'e região. Mecânico na Zona Norte de SP para revisão, injeção, câmbio, freios ou carro importado? Peça um orçamento.',
+  areaTail: 'e região.',
   openMaps: 'Abrir no Google Maps',
   loadMap: 'Carregar mapa interativo',
   mapNote: 'Ilustração esquemática. O mapa interativo só carrega quando você pedir.',
@@ -621,7 +621,7 @@ export const copy = {
   },
   differentials: { countLabel: 'Motivos' },
   reviews: { panelLine: 'Nota no Google · 68 avaliações', source: 'Cliente · Avaliação no Google' },
-  faq: { open: 'Abrir', close: 'Fechar', openMark: '+', closeMark: '\u2212', more: 'Outra dúvida? É só chamar no WhatsApp.' },
+  faq: { open: 'Abrir', close: 'Fechar', openMark: '+', closeMark: '\u2212', more: 'Outra dúvida? Tirar minha dúvida no WhatsApp', moreMessage: 'Olá! Vim pelo site e tenho uma dúvida.' },
   location: {
     addressLabel: 'Endereço',
     coords: 'Coordenadas',
