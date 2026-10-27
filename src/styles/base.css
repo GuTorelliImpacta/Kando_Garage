@@ -28,6 +28,7 @@ a { color: inherit; }
 button { font: inherit; color: inherit; }
 table { border-collapse: collapse; width: 100%; }
 [id] { scroll-margin-top: 72px; }
+@media (max-width: 1099.98px) { html { scroll-padding-bottom: calc(56px + 2px + env(safe-area-inset-bottom) + 24px); } }
 main:focus { outline: none; }
 summary { cursor: pointer; }
 
