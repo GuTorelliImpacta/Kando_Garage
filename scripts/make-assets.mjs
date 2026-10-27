@@ -24,7 +24,6 @@ writeFileSync(
 const abs = (f) => `data:font/woff2;base64,${readFileSync(`public/fonts/${f}`).toString('base64')}`;
 const fonts = `
 @font-face{font-family:BC;font-weight:700;src:url(${abs('barlow-condensed-700.woff2')})}
-@font-face{font-family:BC;font-weight:600;src:url(${abs('barlow-condensed-600.woff2')})}
 @font-face{font-family:IN;font-weight:600;src:url(${abs('inter-600.woff2')})}`;
 const browser = await chromium.launch();
 const shot = async (w, h, body, path, opts = {}) => {
@@ -53,6 +52,6 @@ await shot(1200, 630, `
   </div>
   <div style="position:absolute;left:0;right:0;bottom:0;height:12px;background:repeating-linear-gradient(135deg,#c4272c 0 12px,#141516 12px 24px)"></div>
   <div style="position:absolute;left:64px;bottom:40px;font:600 22px IN;letter-spacing:.14em;text-transform:uppercase;color:#e0a33a">${copy.hero.proofText}</div>
-</div>`, 'public/og.jpg', { type: 'jpeg', quality: 88 });
+</div>`, 'public/og.jpg', { type: 'jpeg', quality: 66 });
 await browser.close();
 console.log('assets ok', company.name);
