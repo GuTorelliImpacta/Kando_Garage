@@ -32,7 +32,7 @@ export function SymptomPicker() {
                   <span className="row__t">{s.label}</span>
                   <span className="row__meta">
                     <span className="row__s">{s.area}</span>
-                    <span className="row__act">{s.cta ?? S.cta}</span>
+                    <span className={`row__act${s.cta ? '' : ' row__act--rep'}`}>{s.cta ?? S.cta}</span>
                   </span>
                 </span>
               </a>

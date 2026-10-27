@@ -30,7 +30,7 @@ export function FAQ() {
             </details>
           ))}
           <p className="faq__more">
-            <WaLink origin="faq" className="tlink" label={copy.faq.more} />
+            <WaLink origin="faq" className="tlink" message={copy.faq.moreMessage} label={copy.faq.more} />
           </p>
         </Reveal>
       </div>
