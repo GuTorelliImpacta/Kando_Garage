@@ -34,7 +34,7 @@ export function Footer() {
             <a className="tlink" href={links.tel}>{ui.call}</a>
           </Field>
           <Field k={copy.footer.emailLabel}>
-            <EmailLink />
+            <EmailLink className="email" />
           </Field>
           <Field k={copy.footer.instagramLabel}>
             <a className="tlink" href={links.instagram} target="_blank" rel="noopener noreferrer">{C.instagram.handle}</a>

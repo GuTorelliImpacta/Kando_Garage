@@ -61,7 +61,11 @@ export function Location() {
               <EmailLink variant="button" light />
             </div>
           </div>
-          <p className="fine fine--l"><strong>{L.areaTitle}:</strong> {L.area.join(', ')} {L.areaTail}</p>
+          <h3 className="label areas__h">{L.areaTitle}</h3>
+          <ul className="areas">
+            {L.area.map((b) => <li key={b}>{b}</li>)}
+            <li className="areas__tail">{L.areaTail}</li>
+          </ul>
         </div>
 
         <Reveal className="loc__map" step={1}>
