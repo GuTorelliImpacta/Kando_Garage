@@ -16,7 +16,7 @@ export function CtaFinal() {
           ))}
         </h2>
         <p className="lead">{ctaFinal.text}</p>
-        <WaLink origin="cta_final" now className="btn btn--primary btn--xl" />
+        <WaLink origin="cta_final" href={ctaFinal.href} label={ctaFinal.cta} className="btn btn--primary btn--xl" />
         <StatusBadge />
       </div>
     </section>

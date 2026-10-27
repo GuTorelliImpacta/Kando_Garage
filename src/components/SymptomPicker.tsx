@@ -1,4 +1,4 @@
-import { copy, fichaCaption, symptoms, symptomsSection as S, ui, wa } from '../content/site';
+import { copy, fichaCaption, symptoms, symptomsSection as S, wa } from '../content/site';
 import { trk } from '../lib/track';
 import { Reveal } from './Reveal';
 
@@ -31,8 +31,8 @@ export function SymptomPicker() {
                 <span className="row__body">
                   <span className="row__t">{s.label}</span>
                   <span className="row__meta">
-                    <span className="row__s">{S.areaLabel}: {s.area}</span>
-                    <span className="row__act">{ui.ctaWhatsapp}</span>
+                    <span className="row__s">{s.area}</span>
+                    <span className="row__act">{s.cta ?? S.cta}</span>
                   </span>
                 </span>
               </a>

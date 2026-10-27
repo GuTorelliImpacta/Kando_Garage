@@ -1,4 +1,4 @@
-import { copy, fichaCaption, servicesSection as S, services } from '../content/site';
+import { copy, ctas, fichaCaption, servicesSection as S, services } from '../content/site';
 import { Reveal } from './Reveal';
 import { ServiceRow } from './ServiceRow';
 import { WaLink } from './WaLink';
@@ -33,7 +33,7 @@ export function ServiceTable() {
               <p className="sheet__h">{S.outroH}</p>
               <p>{S.outroText}</p>
             </div>
-            <WaLink origin="servicos" className="btn btn--primary" />
+            <WaLink origin="servicos" href={ctas.other.href} label={S.outroCta} className="btn btn--primary" />
           </div>
         </Reveal>
         <p className="fine fine--l">{S.introNote}</p>

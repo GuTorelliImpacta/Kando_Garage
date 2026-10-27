@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { company, copy, fichaCaption, links, reviews, reviewsSection as S } from '../content/site';
 import { prefersReducedMotion } from '../hooks/useMatchMedia';
+import { WaLink } from './WaLink';
 import { ReviewCard } from './ReviewCard';
 import { Reveal } from './Reveal';
 
@@ -61,6 +62,9 @@ export function Reviews() {
               ))}
             </Reveal>
           )}
+        </div>
+        <div className="sec-cta">
+          <WaLink origin="avaliacoes" href={S.ctaHref} label={S.cta} className="btn btn--primary btn--lg" />
         </div>
       </div>
     </section>

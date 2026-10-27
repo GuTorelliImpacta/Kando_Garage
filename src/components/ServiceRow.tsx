@@ -12,7 +12,7 @@ export function ServiceRow({ s }: { s: Service }) {
       <td className="srow__d">{s.text}</td>
       <td className="srow__a">
         <a className="tlink tlink--stretch" href={wa(s.message)} target="_blank" rel="noopener noreferrer" {...trk('click_servico', 'servicos', s.id)}>
-          {S.link}
+          {s.cta ?? S.serviceCta}
           <span className="sr-only">: {s.title}</span>
         </a>
       </td>

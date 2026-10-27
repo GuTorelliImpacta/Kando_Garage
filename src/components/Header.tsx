@@ -113,7 +113,7 @@ export function Header({ home }: { home: boolean }) {
           <WaLink origin="menu" className="btn btn--primary menu__cta" />
         </nav>
         <StatusBadge className="hdr__status" />
-        <WaLink origin="header" className="btn btn--primary btn--sm hdr__cta" />
+        <WaLink origin="header" label={ui.ctaWhatsappShort} className="btn btn--primary btn--sm hdr__cta" />
       </div>
     </header>
   );

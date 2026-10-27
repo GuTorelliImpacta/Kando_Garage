@@ -1,9 +1,12 @@
-import { copy } from '../content/site';
+import { brands, copy, warranty } from '../content/site';
 import { Reveal } from './Reveal';
 
 /** Ficha de confiança: tabela de fatos (não cards). Sem ícones, sem estrelas. */
 export function TrustBar() {
   const { caption, items } = copy.trustBar;
+  // Prova de confiança condicional: só aparece com dado confirmado pelo cliente.
+  const showWarranty = warranty.confirmed && warranty.text.trim() !== '';
+  const showBrands = brands.confirmed && brands.items.length > 0;
   return (
     <section className="sec sec--tight paper" aria-labelledby="trust-h">
       <div className="wrap">
@@ -17,6 +20,22 @@ export function TrustBar() {
             </li>
           ))}
         </Reveal>
+        {(showWarranty || showBrands) && (
+          <dl className="strip">
+            {showWarranty && (
+              <div className="strip__i">
+                <dt className="label">{warranty.title}</dt>
+                <dd>{warranty.text}</dd>
+              </div>
+            )}
+            {showBrands && (
+              <div className="strip__i">
+                <dt className="label">{brands.title}</dt>
+                <dd>{brands.items.join(' · ')}</dd>
+              </div>
+            )}
+          </dl>
+        )}
       </div>
     </section>
   );

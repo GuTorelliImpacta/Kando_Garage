@@ -20,7 +20,7 @@ body {
   -webkit-font-smoothing: antialiased;
   overflow-x: clip;
 }
-@media (max-width: 767.98px) { body { padding-bottom: calc(56px + env(safe-area-inset-bottom)); } }
+@media (max-width: 1099.98px) { body { padding-bottom: calc(56px + env(safe-area-inset-bottom)); } }
 h1, h2, h3, h4, p, ul, ol, dl, dd, figure, blockquote { margin: 0; }
 ul, ol { padding: 0; list-style: none; }
 img, svg { display: block; max-width: 100%; }
@@ -44,10 +44,10 @@ summary { cursor: pointer; }
 .num { font-variant-numeric: tabular-nums; }
 
 /* ---------- Superfícies ---------- */
-.sec { position: relative; padding-block: clamp(64px, 8vw, 128px); isolation: isolate; overflow-x: clip; }
-.sec--tight { padding-block: clamp(40px, 5vw, 64px); }
+.sec { position: relative; padding-block: clamp(40px, 8vw, 128px); isolation: isolate; overflow-x: clip; }
+.sec--tight { padding-block: clamp(32px, 5vw, 64px); }
 .sec--flush-top { padding-top: 0; }
-.sec--flush-top > .wrap::before { content: ''; display: block; height: 5px; border-block: 1px solid var(--kg-ink); margin-bottom: clamp(48px, 6vw, 96px); opacity: .6; }
+.sec--flush-top > .wrap::before { content: ''; display: block; height: 5px; border-block: 1px solid var(--kg-ink); margin-bottom: clamp(36px, 6vw, 96px); opacity: .6; }
 .dark-a { background: var(--kg-g950); color: var(--kg-paper); }
 .dark-b { background: var(--dark-b); color: var(--kg-paper); }
 .paper { background: var(--kg-paper); color: var(--kg-ink); }

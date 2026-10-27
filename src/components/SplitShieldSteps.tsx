@@ -1,6 +1,7 @@
 import { fichaCaption, how } from '../content/site';
 import { Emblem } from './Emblem';
 import { Reveal } from './Reveal';
+import { WaLink } from './WaLink';
 
 /** Como trabalhamos: a página se parte como o escudo. Esquerda diagnóstico, direita serviço. */
 export function SplitShieldSteps() {
@@ -28,6 +29,9 @@ export function SplitShieldSteps() {
               </ol>
             </Reveal>
           ))}
+        </div>
+        <div className="sec-cta">
+          <WaLink origin="como" href={how.ctaHref} label={how.cta} className="btn btn--primary btn--lg" />
         </div>
       </div>
     </section>

@@ -4,6 +4,8 @@ import { trk } from '../lib/track';
 
 interface Props {
   origin: string;
+  /** Link wa.me pronto (tem prioridade sobre `message`). */
+  href?: string;
   message?: string;
   label?: ReactNode;
   className?: string;
@@ -11,12 +13,12 @@ interface Props {
   now?: boolean;
 }
 
-/** Link wa.me (texto puro, sem ícone). Sem mensagem usa a mensagem padrão. */
-export function WaLink({ origin, message, label, className = 'btn btn--primary', item, now }: Props) {
+/** Link wa.me (texto puro, sem ícone). Sem href/mensagem usa a mensagem padrão. */
+export function WaLink({ origin, href, message, label, className = 'btn btn--primary', item, now }: Props) {
   return (
     <a
       className={className}
-      href={message ? wa(message) : waDefault}
+      href={href ?? (message ? wa(message) : waDefault)}
       target="_blank"
       rel="noopener noreferrer"
       {...trk('click_whatsapp', origin, item)}
