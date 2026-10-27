@@ -1,4 +1,4 @@
-import { company, copy, jsonLd, seo } from './content/site';
+import { company, copy, jsonLd, links, seo } from './content/site';
 import { resolveRoute, type Route } from './lib/route';
 
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -43,7 +43,10 @@ export function headFor(urlPath: string, siteUrl: string): string {
   if (route === 'home') {
     // O e-mail fica de fora do JSON-LD: ele só é montado no cliente (ver EmailLink), para não aparecer em texto plano no HTML.
     const ld = jsonLd(base);
-    for (const node of ld['@graph'] as Array<Record<string, unknown>>) delete node.email;
+    for (const node of ld['@graph'] as Array<Record<string, unknown>>) {
+      delete node.email;
+      if (node['@type'] === 'AutoRepair') node.hasMap = links.mapsPlace;
+    }
     const json = JSON.stringify(ld).replace(/</g, '\\u003c');
     lines.push(`<script type="application/ld+json">${json}</script>`);
   }

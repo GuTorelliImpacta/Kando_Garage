@@ -59,3 +59,33 @@ Capturados `securitypolicyviolation`, `console.error/warning` e `pageerror` em `
 - Carregamento real do mapa do Google (a rede do ambiente bloqueia google.com): validado apenas que o iframe é criado sem violação de CSP.
 - Redirecionamentos 308, certificado/HTTPS e o `404.html` da Vercel de fato: reproduzidos só por `serve-dist.mjs`, não pela plataforma.
 - Propagação de DNS e emissão de certificado: dependem do domínio e da aprovação do cliente.
+
+## Etapa 2: revalidação (27/10/2026, build com os textos novos)
+
+Nada publicado, DNS intacto, sem git. Único código alterado: `src/seo.ts` (acrescenta `hasMap` = link do Maps ao nó `AutoRepair` do JSON-LD; nenhum dado inventado, sem `priceRange`).
+
+**SEO (7.1/7.2), lido do HTML gerado**
+- `title` e `description` da home idênticos ao texto da seção 7.1; política e 404 com título/descrição próprios e únicos.
+- Canonical sem `.html`: `/` e `/politica-de-privacidade`. A 404 não tem canonical e tem `noindex`. `og:*` (9, 8 na 404 sem `og:url`) e `twitter:*` (4) em todas. H1 único e `lang=pt-BR` nas 3.
+- JSON-LD parseado com `JSON.parse`: `@graph` = `AutoRepair` (name, address, geo, telephone, openingHoursSpecification, areaServed, hasOfferCatalog, sameAs, hasMap) + `FAQPage` com 6 perguntas. Cada pergunta e resposta do JSON-LD foi buscada no texto renderizado: 0 divergências, 6 `<details>` na página. Sem `Review`, `AggregateRating` ou `priceRange`. O e-mail continua fora do JSON-LD (decisão da Etapa 1).
+- `sitemap.xml` (2 URLs) e `robots.txt` (`Allow: /` + `Sitemap`) coerentes com os canonicals.
+- Pendência fora de escopo: validar no Rich Results Test e no Schema Markup Validator (precisam de URL pública).
+
+**Segurança**
+- Os 7 headers: `vercel.json` == `public/_headers` == bloco da seção 9.1 (comparação por script, ordem e valores idênticos).
+- CSP: 0 violações e 0 erros de console, desktop 1280 e mobile 390, em `/`, `/politica-de-privacidade` e URL inexistente; menu mobile abre; clique em "mapa" cria o iframe. Único item: o 404 do próprio documento na página 404.
+- Cache (servidor local com as regras): HTML, `og.jpg`, manifest, robots, sitemap e security.txt com `max-age=0, must-revalidate`; `/fonts/*` 30 dias; `/assets/*` 1 ano `immutable`.
+- `npm audit`: 0 vulnerabilidades (alto/crítico = 0).
+- Segredos: nenhuma chave, token, credencial em URL ou arquivo `.env`/`.pem`/`.key` rastreado (`.gitignore` cobre `.env*`, `dist`). A palavra "token" não aparece mais no bundle atual. O literal do e-mail está só no JS (ofuscação leve, já documentada).
+- Links externos: todos com `rel="noopener noreferrer"`. HTML sem e-mail em texto plano, sem `mailto:`, sem `<form>`/`<input>`, sem atributos `on*`. Sem formulário, portanto não há anti-spam (captcha/honeypot/rate limit) a configurar.
+
+**QA de rotas**
+- 404 real: status 404, `noindex`, botão Voltar aponta para `/` e há 5 links de WhatsApp (`wa.me/5511988367054`).
+- `favicon.svg`, `apple-touch-icon.png`, `logo.png`, `manifest.webmanifest` respondem 200 com content-type correto. `og.jpg`: 1200x630, `image/jpeg`, 93 KB.
+- Âncoras e links internos: 0 quebrados nas 3 páginas (56, 22 e 22 hrefs únicos varridos).
+- Links esperados presentes: `wa.me/5511988367054` (31 na home), `tel:+5511988367054` (3), Maps (busca e place), Instagram `kando_garage`, avaliação (`writereview`).
+
+**Pendências**
+- `security.txt`: contato da Toss Lab e domínio final ainda a confirmar (inalterado).
+- `og.jpg` segue com 93 KB (o agente de performance está tratando).
+- Sem rede pública: notas em securityheaders.com/Observatory, Rich Results Test e redirecionamentos 308 da Vercel só após o preview.
