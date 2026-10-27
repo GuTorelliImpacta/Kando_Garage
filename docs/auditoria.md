@@ -119,3 +119,52 @@ Usar React só no build (SSG, como já é) e **não enviar React ao cliente**: o
 4. Hex dos tokens ainda `[CONFIRMAR]` com o logo original (se mudarem, rodar `scripts/contrast.mjs` e `audit:a11y` de novo).
 5. Quando o carrossel de avaliações for liberado, auditar pausa, foco e anúncio.
 6. Nota de processo: um `git status` somente leitura foi executado por engano durante o trabalho; nenhum outro comando git rodou e nada foi commitado.
+
+## Etapa 2: performance
+
+Medido em 27/10/2026 no mesmo ambiente da seção 1 (build servido por gzip com os headers do `vercel.json`, Chromium 1243, Lighthouse 13 mobile, throttling padrão). Antes = `main` do início da etapa; depois = build final. Home: 5 rodadas cada; política: 3 rodadas cada.
+
+### Tabela antes/depois
+
+| Métrica | Home antes | Home depois | Política antes | Política depois |
+|---|---|---|---|---|
+| Performance | 98–99 (mediana 99) | **100 (5/5)** | 100 | 100 |
+| Acessibilidade / BP / SEO | 100 / 100 / 100 | 100 / 100 / 100 | 100 / 100 / 100 | 100 / 100 / 100 |
+| FCP | 1,50 s | **1,20 s** | 1,35 s | **1,20 s** |
+| LCP | 1,80 s | **1,50 s** | 1,65 s | **1,35 s** |
+| CLS | 0 | 0 (5/5) | 0,0012 | 0,0012 (ver abaixo) |
+| TBT, mediana (intervalo) | 40 ms (17–122) | **34 ms (31–43)** | 17 ms (16–24) | 45 ms (35–46) |
+| Peso transferido | 223,1 KB | **176,1 KB (-47 KB)** | 216,3 KB | **169,3 KB** |
+| JS transferido (gzip) | 83,5 KB | 83,5 KB | 83,5 KB | 83,5 KB |
+| CSS inline (raw / gzip) | 37,37 / 8,66 KB | 37,44 / 8,71 KB | igual | igual |
+| Arquivos de fonte | 5 (117 KB) | **3 (70,6 KB)** | 5 | 3 |
+| `og.jpg` | 93,3 KB | **58,5 KB** | | |
+
+O ganho de FCP/LCP (0,3 s) vem de ter menos fontes disputando banda no início, não de outra mudança. O TBT da home deixou de oscilar (31–43 ms em 5 rodadas, contra 17–122 antes). Na política o TBT subiu de ~17 para ~45 ms: com FCP 0,15 s mais cedo a hidratação passa a cair dentro da janela medida; segue muito abaixo de qualquer limite e a nota é 100.
+
+### O que foi feito
+1. **Fontes 5 para 3** (Inter 400 e 600, Barlow Condensed 700). Inter 500 virou 400 (`.btn__sub`, `.osf dd`, `.osf--l p`, `.strip dd`, `.tag__line dd`, `.hours`); Barlow 600 virou 700 (menu, títulos de linha, passos, FAQ, citações). Como o 700 é um pouco mais largo, `.row__t` ficou com `letter-spacing: -.005em` para os títulos da lista de sintomas continuarem em uma linha a 1280 px. Capturas 360 e 1280 (home e política, claro e escuro) comparadas lado a lado: a única diferença é o texto um pouco mais firme e, no bloco do endereço a 360 px, uma quebra de linha a menos (Inter 400 é mais estreita que 500). Preload continua só da Barlow 700 (H1); `font-display: swap` mantido; 2 famílias. Removidos `inter-500.woff2` e `barlow-condensed-600.woff2` (e a referência em `scripts/make-assets.mjs`).
+2. **Fallback métrico refeito.** Os `local('Arial Narrow')`/`local('Arial')` anteriores não resolviam em Linux/Android e, onde resolvem, o `size-adjust` do Barlow (80%) estava longe do real. Agora há 3 faces de fallback (Inter 400 = 106%, Inter 600 = 98,7%, Barlow 700 = 69%), com `ascent/descent-override` derivados, medidas sobre o texto real das páginas com Liberation Sans (largura igual à do Arial). Teste de estresse (fontes atrasadas 1,5 s, `layout-shift` do navegador): home 360 px de 0,0055 para **0,0002**; home 1280 px de **0,1817 para 0,0008**; política 360 px de 0,0011 para **0**; política 1280 px de 0,0199 para 0,0122.
+3. **`og.jpg`** de qualidade 88 para 66 em `scripts/make-assets.mjs`: 93,3 para **58,5 KB**, 1200x630, texto nítido (conferido). `logo.png` (29,5 KB) e `apple-touch-icon.png` (8,4 KB) não mudaram: só entram no JSON-LD e no atalho do iOS, fora do carregamento da página, e reduzi-los exigiria quantizar o antialiasing (ganho real só de ~18 e ~5 KB nesses arquivos).
+4. **Hidratação fatiada.** `src/hydrate.tsx` agora chama `hydrateRoot` dentro de `startTransition`. Em lane padrão o React hidrata numa tarefa única de ~85 ms; em transição ele cede a cada ~5 ms. Medido em 10 rodadas (5+5) por variante, somando só o bloqueio atribuído ao `hydrate-*.js`: **mediana 78 ms para 38 ms**. Validado: menu abre/fecha (Esc), FAQ abre, status de horário (`data-state` aplicado; `test-status` 10/10), e-mail montado (2 links `mailto`), barra de ação visível, reveal sem elementos presos ocultos, console sem erro ou aviso de hidratação.
+
+### Experimentos descartados
+| Experimento | Resultado | Decisão |
+|---|---|---|
+| Hidratar em `requestIdleCallback` (timeout 2 s) após o FCP | TBT 98/74/20/38/16 contra 88/44/39/70/43 sem ele: sem diferença além do ruído | revertido |
+| Hidratar só na primeira interação ou após o TTI | tiraria o TBT do relatório, mas cliques antes da hidratação se perderiam (menu, FAQ) | não testado, risco de INP |
+| Ilhas/Suspense por seção | a hidratação já é fatiada pela transição; o resto do TBT é parse/avaliação do bundle de 271 KB, que ilhas não reduzem | não vale o esforço |
+
+O TBT restante tem duas partes: ~60 ms de avaliação do bundle React (piso, ver seção 5 acima) e tarefas de estilo/layout antes da hidratação (HTML de 90 KB e 37 KB de CSS), que não dependem da estratégia de hidratação. Só trocar o runtime (seção 5.5, opções B ou C) reduz o que sobra.
+
+### CSS não usado
+Cobertura de CSS do Chromium nas 3 páginas, 5 larguras (360 a 1920), claro/escuro, com e sem reduced-motion, menu aberto, FAQ aberto, hover, foco e os 4 estados do status: restam 3,9 KB (10%) sem uso, e **quase tudo é intencional**: regras do carrossel de avaliações e da galeria (componentes prontos, ainda sem conteúdo liberado), fallback sem JavaScript (`scripting: none`), `:active`/`:focus` e cores do status no papel, `@keyframes` só com movimento permitido. Único resto morto encontrado e removido: `.paper-deep` (classe de superfície que nenhum componente usa; o token `--kg-paper-deep` segue em uso). Tokens: nenhum sem uso. Resultado: CSS praticamente igual; o ganho esperado de 36 KB para bem menos **não existe** porque o CSS já estava enxuto (o aumento de 0,07 KB vem das 2 faces de fallback novas).
+
+### Ficou de fora (não vale o esforço)
+- CLS 0,0012 na política: vem da troca do texto do e-mail ("kandogarage arroba gmail.com" para o link) na hidratação; o deslocamento é de poucos pixels, a nota é 100 e o texto é anti-raspagem por desenho. Sem deslocamento geométrico medido com a hidratação atrasada 1,5 s.
+- Quantizar `logo.png`/`apple-touch-icon.png` (fora do caminho de carregamento).
+- Trocar de runtime para atingir JS < 30 KB (decisão do cliente, seção 5.5).
+- Brotli e CDN: só dá para medir no preview da Vercel.
+
+### Validação
+`npx tsc --noEmit` limpo; `npm run build` sem erros ou avisos; `npx tsx scripts/test-status.mjs` 10/10; `node scripts/audit-a11y.mjs http://localhost:4390` 12/12 combinações com 0 violações (único erro de console é o 404 esperado de `/nao-existe`).
