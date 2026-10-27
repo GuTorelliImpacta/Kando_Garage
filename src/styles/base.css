@@ -1,12 +1,12 @@
 /* ---------- Fontes (self-hosted, latin, swap) ---------- */
-@font-face { font-family: 'Barlow Condensed'; font-weight: 600; font-style: normal; font-display: swap; src: url(/fonts/barlow-condensed-600.woff2) format('woff2'); }
 @font-face { font-family: 'Barlow Condensed'; font-weight: 700; font-style: normal; font-display: swap; src: url(/fonts/barlow-condensed-700.woff2) format('woff2'); }
 @font-face { font-family: 'Inter'; font-weight: 400; font-style: normal; font-display: swap; src: url(/fonts/inter-400.woff2) format('woff2'); }
-@font-face { font-family: 'Inter'; font-weight: 500; font-style: normal; font-display: swap; src: url(/fonts/inter-500.woff2) format('woff2'); }
 @font-face { font-family: 'Inter'; font-weight: 600; font-style: normal; font-display: swap; src: url(/fonts/inter-600.woff2) format('woff2'); }
-/* Fallbacks com métricas ajustadas (reduzem o salto de layout na troca) */
-@font-face { font-family: 'Inter Fallback'; src: local('Arial'); size-adjust: 107.4%; ascent-override: 90.2%; descent-override: 22.5%; line-gap-override: 0%; }
-@font-face { font-family: 'BC Fallback'; src: local('Arial Narrow'), local('Arial'); size-adjust: 80%; ascent-override: 115%; descent-override: 25%; line-gap-override: 0%; }
+/* Fallbacks métricos (Arial/Helvetica/Liberation/Arimo têm a mesma largura): size-adjust medido sobre o texto real da página
+   (Inter 400 = 106%, Inter 600 = 98,7%, Barlow Condensed 700 = 69%); ascent/descent = métrica da fonte / size-adjust. */
+@font-face { font-family: 'Inter Fallback'; font-weight: 400; src: local('Arial'), local('Helvetica'), local('Liberation Sans'), local('Arimo'); size-adjust: 106%; ascent-override: 91.4%; descent-override: 22.8%; line-gap-override: 0%; }
+@font-face { font-family: 'Inter Fallback'; font-weight: 600 700; src: local('Arial Bold'), local('Arial-BoldMT'), local('Helvetica Bold'), local('Liberation Sans Bold'), local('Arimo Bold'); size-adjust: 98.7%; ascent-override: 98.2%; descent-override: 24.4%; line-gap-override: 0%; }
+@font-face { font-family: 'BC Fallback'; font-weight: 700; src: local('Arial Bold'), local('Arial-BoldMT'), local('Helvetica Bold'), local('Liberation Sans Bold'), local('Arimo Bold'); size-adjust: 69%; ascent-override: 144.9%; descent-override: 29%; line-gap-override: 0%; }
 
 /* ---------- Reset ---------- */
 *, *::before, *::after { box-sizing: border-box; }
@@ -51,7 +51,6 @@ summary { cursor: pointer; }
 .dark-a { background: var(--kg-g950); color: var(--kg-paper); }
 .dark-b { background: var(--dark-b); color: var(--kg-paper); }
 .paper { background: var(--kg-paper); color: var(--kg-ink); }
-.paper-deep { background: var(--kg-paper-deep); color: var(--kg-ink); }
 
 /* Grão (seções escuras) */
 .grain::before {
@@ -113,7 +112,7 @@ summary { cursor: pointer; }
   font: 700 1.25rem / 1 var(--font-display); letter-spacing: .06em; text-transform: uppercase; text-align: center; text-decoration: none; cursor: pointer;
   transition: background-color .12s, border-color .12s, color .12s;
 }
-.btn__sub { display: block; font: 500 .75rem / 1.2 var(--font-body); letter-spacing: 0; text-transform: none; padding-bottom: 2px; }
+.btn__sub { display: block; font: 400 .75rem / 1.2 var(--font-body); letter-spacing: 0; text-transform: none; padding-bottom: 2px; }
 .btn--sm { min-height: 48px; padding: 0 18px; font-size: 1.0625rem; }
 .btn--lg { min-height: 56px; }
 .btn--xl { min-height: 64px; font-size: clamp(1.25rem, 1.05rem + 1vw, 1.5rem); padding: 0 20px; width: 100%; }
@@ -140,10 +139,10 @@ summary { cursor: pointer; }
 /* ---------- Campo de ordem de serviço ---------- */
 .osf { padding-block: 6px; border-bottom: 1px solid var(--line-dark); }
 .osf dt, .osf h3 { font: 600 var(--fs-label) / 1.2 var(--font-body); letter-spacing: .14em; text-transform: uppercase; color: var(--kg-steel-400); margin-bottom: 2px; }
-.osf dd { font: 500 1.0625rem / 1.4 var(--font-body); font-variant-numeric: tabular-nums; letter-spacing: .01em; }
+.osf dd { font: 400 1.0625rem / 1.4 var(--font-body); font-variant-numeric: tabular-nums; letter-spacing: .01em; }
 .osf--l { border-bottom: 0; padding-block: 16px; }
 .osf--l h3 { color: var(--kg-ink-muted); }
-.osf--l p { font-size: 1.125rem; font-weight: 500; }
+.osf--l p { font-size: 1.125rem; font-weight: 400; }
 
 /* ---------- Status "aberto agora" ---------- */
 .status { display: flex; align-items: center; gap: 10px; margin: 0; min-height: 28px; font: 600 var(--fs-label) / 1.3 var(--font-body); letter-spacing: .12em; text-transform: uppercase; font-variant-numeric: tabular-nums; color: var(--kg-steel-300); }
