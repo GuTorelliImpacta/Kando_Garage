@@ -1,4 +1,4 @@
-import { StrictMode } from 'react';
+import { StrictMode, startTransition } from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
 import { App } from './App';
 
@@ -10,6 +10,7 @@ export function start() {
       <App path={window.location.pathname} />
     </StrictMode>
   );
-  if (root.hasChildNodes()) hydrateRoot(root, app);
+  // Em transição, a hidratação é fatiada (cede a cada ~5 ms) em vez de uma tarefa longa única.
+  if (root.hasChildNodes()) startTransition(() => { hydrateRoot(root, app); });
   else createRoot(root).render(app);
 }
