@@ -81,7 +81,36 @@ export function wa(message: string): string {
   return `https://wa.me/${company.phoneWa}?text=${encodeURIComponent(message)}`;
 }
 
-export const waDefault = wa('Olá! Vim pelo site e gostaria de falar sobre meu carro.');
+/** Mensagens pré-preenchidas. Cada uma combina com o rótulo do botão que a usa. */
+const msgQuote = 'Olá! Vim pelo site e gostaria de pedir um orçamento.';
+const msgDiagnosis = 'Olá! Vim pelo site e gostaria de agendar um diagnóstico.';
+const msgRevision = 'Olá! Vim pelo site e quero agendar a revisão do meu carro. Modelo/ano/km: ';
+
+/** Link padrão (hero, cabeçalho, local, rodapé): combina com “Pedir orçamento no WhatsApp”. */
+export const waDefault = wa(msgQuote);
+
+/**
+ * CTAs por posição na página: rótulo + mensagem coerentes entre si.
+ * Nenhum promete preço, prazo, garantia ou gratuidade.
+ * `href` é o link wa.me pronto. Use `label` e `href` direto nos componentes.
+ */
+export const ctas = {
+  hero: { label: 'Pedir orçamento no WhatsApp', message: msgQuote, href: wa(msgQuote) },
+  heroSecondary: { label: 'Escolher meu sintoma', href: '#sintomas' },
+  /** Linhas do seletor de sintomas (a revisão tem rótulo próprio em `Symptom.cta`) */
+  symptom: { label: 'Agendar diagnóstico', message: msgDiagnosis, href: wa(msgDiagnosis) },
+  /** Cartões de serviço (rótulo curto; o aria-label concatena o título do serviço) */
+  service: { label: 'Pedir orçamento', message: msgQuote, href: wa(msgQuote) },
+  revision: { label: 'Agendar minha revisão', message: msgRevision, href: wa(msgRevision) },
+  /** Fim de “Como trabalhamos” */
+  how: { label: 'Agendar diagnóstico', message: msgDiagnosis, href: wa(msgDiagnosis) },
+  /** Fim de “Avaliações” */
+  reviews: { label: 'Pedir orçamento no WhatsApp', message: msgQuote, href: wa(msgQuote) },
+  /** “Não achou o seu problema?” e “Outra dúvida?” */
+  other: { label: 'Descrever meu problema', message: 'Olá! Vim pelo site. Meu carro está com o seguinte problema: ', href: wa('Olá! Vim pelo site. Meu carro está com o seguinte problema: ') },
+  /** CTA final */
+  final: { label: 'Agendar diagnóstico agora', message: msgDiagnosis, href: wa(msgDiagnosis) },
+} as const;
 
 // ---------------------------------------------------------------- horário (fonte única)
 /** Dias 0 = domingo … 6 = sábado. `null` = fechado. Horas em minutos desde 00:00. */
@@ -114,8 +143,11 @@ export const nav = [
 ];
 
 export const ui = {
-  ctaWhatsapp: 'Chamar no WhatsApp',
-  ctaWhatsappNow: 'Chamar no WhatsApp agora',
+  // Mantêm os nomes antigos, com rótulos específicos (ver também `ctas`).
+  ctaWhatsapp: 'Pedir orçamento no WhatsApp',
+  ctaWhatsappNow: 'Agendar diagnóstico agora',
+  /** Versão curta para cabeçalho e barra fixa (novo, opcional) */
+  ctaWhatsappShort: 'Pedir orçamento',
   call: 'Ligar',
   directions: 'Como chegar',
   email: 'E-mail',
@@ -152,13 +184,13 @@ export const orderSheet = {
     cta: 'Abrir ordem de serviço',
   },
   /** Chamadas curtas para links/botões em cartões numerados */
-  openItem: 'Abrir item no WhatsApp',
+  openItem: 'Agendar diagnóstico',
   /** Rótulos de campo da faixa de contato (somente exibição) */
   fields: {
-    vehicles: 'Veículos',
-    vehiclesValue: 'Nacionais e importados',
-    area: 'Região',
-    areaValue: 'Tremembé, Zona Norte de SP',
+    vehicles: 'Veículos', // redundante: o subtítulo do hero já diz “Nacionais e importados”
+    vehiclesValue: 'Nacionais e importados', // redundante
+    area: 'Região', // redundante: o eyebrow já diz “Tremembé, SP”
+    areaValue: 'Tremembé, Zona Norte de SP', // redundante
     hours: 'Atendimento',
     quote: 'Orçamento',
     quoteValue: 'Antes do serviço, para você aprovar',
@@ -212,11 +244,13 @@ export const partTag = {
 
 // ---------------------------------------------------------------- hero
 export const hero = {
-  eyebrow: 'Mecânica geral, preventiva e especializada · Tremembé, Zona Norte de SP',
+  eyebrow: 'Mecânica geral, preventiva e especializada · Tremembé, SP',
   h1: 'Seu carro em boas mãos.',
-  sub: 'Diagnóstico explicado, orçamento antes do serviço e cada peça trocada mostrada a você. Nacionais e importados.',
+  sub: 'Diagnóstico explicado, orçamento antes do serviço e peças mostradas na entrega. Nacionais e importados.',
   proof: 'no Google',
-  ctaSecondary: 'O que meu carro tem?',
+  ctaPrimary: ctas.hero.label,
+  ctaPrimaryHref: ctas.hero.href,
+  ctaSecondary: ctas.heroSecondary.label,
   sheetLabel: 'Ordem de serviço · Kando Garage',
 };
 
@@ -230,33 +264,38 @@ export interface Symptom {
   area: string;
   message: string;
   warning?: string;
+  /** Rótulo próprio do botão (opcional). Sem ele, use `symptomsSection.cta`. */
+  cta?: string;
 }
 
 export const symptomsSection = {
   h2: 'O que seu carro está fazendo?',
   sub: 'Toque no sintoma e fale direto com a gente no WhatsApp. A mensagem já vai pronta.',
   micro: 'Não sabe explicar? Tudo bem. Manda um áudio ou um vídeo do barulho no WhatsApp que a gente te ajuda.',
+  /** Rótulo padrão das linhas de sintoma */
+  cta: ctas.symptom.label,
+  /** Sugestão: mostrar `area` como etiqueta curta, sem o prefixo “Área:”. Mantido por compatibilidade. */
   areaLabel: 'Área',
 };
 
 export const symptoms: Symptom[] = [
-  { id: 'injecao', n: '01', area: 'Injeção eletrônica', label: 'Luz da injeção acesa / carro falhando', message: 'Olá! Vim pelo site. A luz da injeção acendeu / o carro está falhando. Podem avaliar?' },
-  { id: 'motor', n: '02', area: 'Motor', label: 'Perdeu força, fumaça ou barulho no motor', message: 'Olá! Vim pelo site. Meu carro está com problema no motor (perda de força/barulho/fumaça). Podem avaliar?' },
-  { id: 'cambio', n: '03', area: 'Câmbio', label: 'Marcha arranhando, câmbio pesado ou trancos', message: 'Olá! Vim pelo site. Estou com problema no câmbio (marcha arranhando/tranco). Podem avaliar?' },
-  { id: 'suspensao', n: '04', area: 'Suspensão', label: 'Barulho em buraco, carro “batendo”', message: 'Olá! Vim pelo site. Meu carro está com barulho na suspensão. Podem avaliar?' },
-  { id: 'freios', n: '05', area: 'Freios', label: 'Freio chiando, pedal mole ou carro puxando', message: 'Olá! Vim pelo site. Estou com problema no freio. Podem avaliar?' },
-  { id: 'airbag', n: '06', area: 'Airbag', label: 'Luz do airbag acesa', message: 'Olá! Vim pelo site. A luz do airbag está acesa no painel. Podem avaliar?' },
-  { id: 'arrefecimento', n: '07', area: 'Arrefecimento', label: 'Temperatura subindo / vazando água', message: 'Olá! Vim pelo site. A temperatura do carro está subindo / vazando água. Podem avaliar?' },
+  { id: 'injecao', n: '01', area: 'Injeção eletrônica', label: 'Luz da injeção acesa / carro falhando', message: 'Olá! Vim pelo site. A luz da injeção acendeu / o carro está falhando. Gostaria de agendar um diagnóstico.' },
+  { id: 'motor', n: '02', area: 'Motor', label: 'Perdeu força, fumaça ou barulho no motor', message: 'Olá! Vim pelo site. Meu carro está com problema no motor (perda de força/barulho/fumaça). Gostaria de agendar um diagnóstico.' },
+  { id: 'cambio', n: '03', area: 'Câmbio', label: 'Marcha arranhando, câmbio pesado ou trancos', message: 'Olá! Vim pelo site. Estou com problema no câmbio (marcha arranhando/tranco). Gostaria de agendar um diagnóstico.' },
+  { id: 'suspensao', n: '04', area: 'Suspensão', label: 'Barulho em buraco, carro “batendo”', message: 'Olá! Vim pelo site. Meu carro está com barulho na suspensão. Gostaria de agendar um diagnóstico.' },
+  { id: 'freios', n: '05', area: 'Freios', label: 'Freio chiando, pedal mole ou carro puxando', message: 'Olá! Vim pelo site. Estou com problema no freio. Gostaria de agendar um diagnóstico.' },
+  { id: 'airbag', n: '06', area: 'Airbag', label: 'Luz do airbag acesa', message: 'Olá! Vim pelo site. A luz do airbag está acesa no painel. Gostaria de agendar um diagnóstico.' },
+  { id: 'arrefecimento', n: '07', area: 'Arrefecimento', label: 'Temperatura subindo / vazando água', message: 'Olá! Vim pelo site. A temperatura do carro está subindo / vazando água. Gostaria de agendar um diagnóstico.' },
   {
     id: 'combustivel',
     n: '08',
     area: 'Combustível',
     label: 'Cheiro ou vazamento de combustível',
-    message: 'Olá! Vim pelo site. Estou sentindo cheiro / vendo vazamento de combustível. Podem avaliar?',
+    message: 'Olá! Vim pelo site. Estou sentindo cheiro / vendo vazamento de combustível. Gostaria de agendar um diagnóstico.',
     warning: 'Se o cheiro for forte, não dê partida. Fale com a gente.',
   },
-  { id: 'revisao', n: '09', area: 'Revisão periódica', label: 'Hora da revisão', message: 'Olá! Vim pelo site. Quero agendar a revisão do meu carro. Modelo/ano/km: ' },
-  { id: 'outro', n: '10', area: 'Geral', label: 'Outro problema', message: 'Olá! Vim pelo site. Meu carro está com o seguinte problema: ' },
+  { id: 'revisao', n: '09', area: 'Revisão periódica', label: 'Hora da revisão', message: msgRevision, cta: 'Agendar revisão' },
+  { id: 'outro', n: '10', area: 'Geral', label: 'Outro problema', message: 'Olá! Vim pelo site. Meu carro está com o seguinte problema: ', cta: 'Descrever meu problema' },
 ];
 
 // ---------------------------------------------------------------- serviços
@@ -265,30 +304,36 @@ export interface Service {
   /** Numeração 01–09 da lista */
   n: string;
   title: string;
+  /** Uma linha, até 80 caracteres */
   text: string;
   message: string;
+  /** Rótulo próprio do botão (opcional). Sem ele, use `servicesSection.serviceCta`. */
+  cta?: string;
 }
 
 export const servicesSection = {
   h2: 'Mecânica geral, preventiva e especializada',
   intro: 'Trabalhamos com veículos nacionais e importados, com serviço e diagnóstico em todas estas áreas:',
-  introNote:
-    'Oficina mecânica no Tremembé para quem precisa de diagnóstico de injeção eletrônica, câmbio, freios, suspensão e revisão de carro, também para moradores do Tucuruvi e do Mandaqui.',
-  link: 'Falar sobre isso',
+  introNote: 'Oficina mecânica no Tremembé. Revisão de carro e diagnóstico para quem mora no Tucuruvi e no Mandaqui.',
+  /** Mesmo valor de `serviceCta`; mantido por compatibilidade */
+  link: ctas.service.label,
+  /** Rótulo curto do botão de cada serviço (o aria-label deve concatenar o título) */
+  serviceCta: ctas.service.label,
   outroH: 'Não achou o seu problema?',
   outroText: 'Descreva no WhatsApp, ou mande um áudio, que a gente explica.',
+  outroCta: ctas.other.label,
 };
 
-const svcMsg = (what: string) => `Olá! Vim pelo site. Gostaria de falar sobre ${what}. Podem avaliar?`;
+const svcMsg = (what: string) => `Olá! Vim pelo site e gostaria de pedir um orçamento para ${what}.`;
 
 export const services: Service[] = [
-  { id: 'injecao', n: '01', title: 'Injeção eletrônica', text: 'Diagnóstico com scanner para falhas, perda de potência, consumo alto e luz da injeção acesa.', message: svcMsg('injeção eletrônica') },
-  { id: 'motor', n: '02', title: 'Motor', text: 'Ruídos, vazamentos, superaquecimento, correias e manutenção completa do motor.', message: svcMsg('o motor do meu carro') },
-  { id: 'cambio', n: '03', title: 'Câmbio', text: 'Marchas arranhando, trancos, câmbio pesado ou ruidoso. Diagnóstico e reparo de câmbio para nacionais e importados.', message: svcMsg('o câmbio do meu carro') },
-  { id: 'suspensao', n: '04', title: 'Suspensão', text: 'Amortecedores, molas, buchas e terminais. Fim do barulho e mais estabilidade.', message: svcMsg('a suspensão do meu carro') },
-  { id: 'freios', n: '05', title: 'Freios', text: 'Pastilhas, discos, fluido e diagnóstico de ruídos e pedal mole. Segurança em primeiro lugar.', message: svcMsg('os freios do meu carro') },
-  { id: 'airbag', n: '06', title: 'Airbag', text: 'Diagnóstico da luz do airbag acesa e do sistema de segurança do veículo.', message: svcMsg('o airbag do meu carro') },
-  { id: 'revisoes', n: '07', title: 'Revisões periódicas', text: 'Seguimos a agenda de revisão do seu veículo, sem empurrar serviço desnecessário.', message: 'Olá! Vim pelo site. Quero agendar a revisão do meu carro. Modelo/ano/km: ' },
+  { id: 'injecao', n: '01', title: 'Injeção eletrônica', text: 'Diagnóstico com scanner: falhas, perda de potência, consumo alto, luz acesa.', message: svcMsg('a injeção eletrônica') },
+  { id: 'motor', n: '02', title: 'Motor', text: 'Ruídos, vazamentos, superaquecimento, correias e manutenção completa.', message: svcMsg('o motor do meu carro') },
+  { id: 'cambio', n: '03', title: 'Câmbio', text: 'Marcha arranhando, trancos, câmbio pesado ou ruidoso. Diagnóstico e reparo.', message: svcMsg('o câmbio do meu carro') },
+  { id: 'suspensao', n: '04', title: 'Suspensão', text: 'Amortecedores, molas, buchas e terminais. Menos barulho, mais estabilidade.', message: svcMsg('a suspensão do meu carro') },
+  { id: 'freios', n: '05', title: 'Freios', text: 'Pastilhas, discos, fluido, ruídos e pedal mole. Segurança em primeiro lugar.', message: svcMsg('os freios do meu carro') },
+  { id: 'airbag', n: '06', title: 'Airbag', text: 'Diagnóstico da luz do airbag acesa e do sistema de segurança.', message: svcMsg('o airbag do meu carro') },
+  { id: 'revisoes', n: '07', title: 'Revisões periódicas', text: 'Seguimos a agenda de revisão do seu veículo, sem serviço desnecessário.', message: msgRevision, cta: 'Agendar revisão' },
   { id: 'arrefecimento', n: '08', title: 'Arrefecimento', text: 'Limpeza do sistema, radiador, mangueiras e controle de temperatura.', message: svcMsg('o sistema de arrefecimento') },
   { id: 'combustivel', n: '09', title: 'Sistema de combustível', text: 'Diagnóstico e correção de vazamentos e falhas na alimentação.', message: svcMsg('o sistema de combustível') },
 ];
@@ -324,9 +369,15 @@ export const how = {
       ] as Step[],
     },
   ],
+  /** CTA no fim da seção */
+  cta: ctas.how.label,
+  ctaHref: ctas.how.href,
   highlight: {
-    title: 'Cada peça trocada é mostrada a você',
-    text: 'É um elogio que aparece sempre nas avaliações, e virou promessa: você vê cada peça substituída e entende o que foi feito no seu carro.',
+    // Texto reescrito para não repetir o passo 04 nem a etiqueta de peça.
+    // Sugestão ao frontend: se a página continuar longa, este bloco pode ser cortado
+    // (o passo 04 e a etiqueta já dizem o mesmo). Só o `quote` perde lugar até a autorização.
+    title: 'Você acompanha o que foi feito',
+    text: 'As peças substituídas ficam à vista na entrega, e a gente explica cada uma.',
     // CONFIRMAR autorização para exibir o trecho da avaliação
     quote: {
       confirmed: false,
@@ -338,9 +389,9 @@ export const how = {
 
 export const revision = {
   h2: 'Revisão conforme a agenda do seu carro',
-  text: 'Seu manual tem uma agenda de revisões por km ou tempo. A gente segue a agenda do seu carro, sem empurrar serviço que ele ainda não precisa.',
-  cta: 'Agendar minha revisão',
-  message: 'Olá! Vim pelo site. Quero agendar a revisão do meu carro. Modelo/ano/km: ',
+  text: 'Seu manual traz uma agenda de revisões por km ou tempo. Seguimos essa agenda, sem empurrar serviço de que o carro não precisa.',
+  cta: ctas.revision.label,
+  message: msgRevision,
 };
 
 // ---------------------------------------------------------------- diferenciais
@@ -353,12 +404,12 @@ export interface Differential {
 export const differentials = {
   h2: 'Por que os clientes voltam e indicam',
   items: [
-    { n: '01', title: 'Honestidade comprovada', text: 'Nota 5,0 no Google em 68 avaliações.' },
-    { n: '02', title: 'Preço justo', text: 'Orçamento claro, sem troca desnecessária.' },
-    { n: '03', title: 'A gente explica', text: 'Você entende o que acontece com o seu carro, sem “mecaniquês”.' },
-    { n: '04', title: 'Ambiente limpo e confortável', text: 'Área de descanso com cafezinho enquanto você espera.' },
+    // Removidos por duplicar outras seções: “Honestidade comprovada” (painel 5,0)
+    // e “A gente explica” (passo 01 de Como trabalhamos).
+    { n: '01', title: 'Preço justo', text: 'Orçamento claro, sem troca desnecessária.' },
+    { n: '02', title: 'Ambiente limpo e confortável', text: 'Área de descanso com cafezinho enquanto você espera.' },
     // CONFIRMAR: nome/função do Diego antes de citá-lo aqui.
-    { n: '05', title: 'Atendimento direto', text: 'Você fala com quem cuida do seu carro.' },
+    { n: '03', title: 'Atendimento direto', text: 'Você fala com quem cuida do seu carro.' },
   ] as Differential[],
 };
 
@@ -373,6 +424,9 @@ export const reviewsSection = {
   seal: 'avaliações no Google',
   seeAll: 'Ver todas no Google',
   rate: 'Já é cliente? Avalie a gente',
+  /** CTA no fim da seção (distinto do de “Como trabalhamos”) */
+  cta: ctas.reviews.label,
+  ctaHref: ctas.reviews.href,
   prev: 'Avaliação anterior',
   next: 'Próxima avaliação',
   source: 'Avaliação no Google',
@@ -387,6 +441,35 @@ export const reviews: Review[] = [
   { confirmed: false, author: 'Cliente', text: 'Super paciente pra explicar e mostrar o problema [...]. Tem uma área de descanso super confortável e aconchegante com cafezinho.' },
   { confirmed: false, author: 'Cliente', text: 'Resolveu o problema de vazamento de combustível após o abastecimento. Não conhecia a oficina, e agora já tenho onde deixar meu carro.' },
 ];
+
+// ---------------------------------------------------------------- prova de confiança (INVISÍVEL até confirmar)
+/**
+ * Garantia dos serviços. Não renderizar enquanto `confirmed` for false.
+ * Os textos abaixo são placeholders: nunca devem chegar ao visitante.
+ */
+export interface Warranty extends Confirmable {
+  title: string;
+  /** Texto exato aprovado pelo cliente (prazo e condições) */
+  text: string;
+}
+// CONFIRMAR: existe garantia? Qual prazo e quais condições? Depois, preencher `text` e `confirmed: true`.
+export const warranty: Warranty = {
+  confirmed: false,
+  title: 'Garantia dos serviços',
+  text: '', // CONFIRMAR
+};
+
+/** Marcas atendidas. Não renderizar enquanto `confirmed` for false ou `items` estiver vazio. */
+export interface Brands extends Confirmable {
+  title: string;
+  items: string[];
+}
+// CONFIRMAR: quais marcas a oficina atende e pode citar? Depois, preencher `items` e `confirmed: true`.
+export const brands: Brands = {
+  confirmed: false,
+  title: 'Marcas que atendemos',
+  items: [], // CONFIRMAR
+};
 
 // ---------------------------------------------------------------- galeria
 export interface GalleryItem {
@@ -408,13 +491,13 @@ export interface Faq extends Confirmable {
 }
 export const faqSection = { h2: 'Perguntas frequentes' };
 export const faq: Faq[] = [
-  { confirmed: true, q: 'Vocês atendem carros importados?', a: 'Sim. Trabalhamos com veículos nacionais e importados, com serviço e diagnóstico em injeção eletrônica, motor, câmbio, suspensão, freios e airbag. Atendemos toda a Zona Norte.' },
+  { confirmed: true, q: 'Vocês atendem carros importados?', a: 'Sim, nacionais e importados. Diagnóstico de injeção, motor, câmbio, suspensão, freios e airbag, para toda a Zona Norte.' },
   { confirmed: true, q: 'Vocês mostram as peças trocadas?', a: 'Sim. Todas as peças substituídas são mostradas na entrega.' },
   // CONFIRMAR se atende sem agendamento
-  { confirmed: true, q: 'Preciso agendar?', a: 'Recomendamos chamar no WhatsApp antes para garantir o melhor horário.' },
-  { confirmed: true, q: 'A luz do airbag acendeu. É perigoso?', a: 'Pode indicar que o airbag não vai funcionar em caso de batida. Vale fazer o diagnóstico o quanto antes.' },
-  { confirmed: true, q: 'Como funciona a revisão?', a: 'Seguimos a agenda de revisão indicada para o seu veículo, por quilometragem ou tempo, sem incluir serviço que ele ainda não precisa.' },
-  { confirmed: true, q: 'Quanto tempo leva o serviço?', a: 'Depende do diagnóstico. O prazo vem junto com o orçamento e você é avisado pelo WhatsApp.' },
+  { confirmed: true, q: 'Preciso agendar?', a: 'Recomendamos chamar no WhatsApp antes, para garantir o melhor horário.' },
+  { confirmed: true, q: 'A luz do airbag acendeu. É perigoso?', a: 'Pode indicar que o airbag não vai funcionar numa batida. Vale fazer o diagnóstico o quanto antes.' },
+  { confirmed: true, q: 'Como funciona a revisão?', a: 'Seguimos a agenda de revisão do seu veículo, por km ou tempo, sem incluir serviço de que ele não precisa.' },
+  { confirmed: true, q: 'Quanto tempo leva o serviço?', a: 'Depende do diagnóstico. O prazo vem junto com o orçamento e avisamos pelo WhatsApp.' },
   // CONFIRMAR: respostas abaixo dependem do cliente
   { confirmed: false, q: 'O orçamento é cobrado?', a: '' },
   { confirmed: false, q: 'Quais formas de pagamento aceitam?', a: '' },
@@ -424,13 +507,12 @@ export const faq: Faq[] = [
 // ---------------------------------------------------------------- local
 export const location = {
   h2: 'Venha nos visitar no Tremembé',
-  intro: 'A Kando Garage é uma oficina mecânica no Tremembé, na Zona Norte de São Paulo. Atendemos moradores e quem trabalha na região, com mecânica geral, preventiva e especializada para carros nacionais e importados.',
+  intro: 'Oficina mecânica no Tremembé, Zona Norte de São Paulo. Mecânica geral, preventiva e especializada para nacionais e importados.',
   hoursTitle: 'Horário de funcionamento',
   today: 'hoje',
   areaTitle: 'Atendemos toda a Zona Norte',
   area: ['Tremembé', 'Jardim Tremembé', 'Tucuruvi', 'Mandaqui', 'Jaçanã', 'Vila Irmãos Arnoni', 'Horto Florestal'],
-  areaTail:
-    'e região. Se você procura mecânico na Zona Norte de SP para revisão, injeção eletrônica, câmbio ou freios, ou um mecânico para carro importado, é só chamar no WhatsApp.',
+  areaTail: 'e região. Mecânico na Zona Norte de SP para revisão, injeção, câmbio, freios ou carro importado? Peça um orçamento.',
   openMaps: 'Abrir no Google Maps',
   loadMap: 'Carregar mapa interativo',
   mapNote: 'Ilustração esquemática. O mapa interativo só carrega quando você pedir.',
@@ -440,6 +522,10 @@ export const ctaFinal = {
   caption: orderSheet.captions.cta,
   h2: 'Seu carro está dando sinal?',
   text: 'Fale com quem explica antes de mexer.',
+  /** Botão principal: combina com `ui.ctaWhatsappNow`. Use `message`/`href` deste objeto, não `waDefault`. */
+  cta: ctas.final.label,
+  message: ctas.final.message,
+  href: ctas.final.href,
 };
 
 export const footer = {
@@ -455,7 +541,7 @@ export const privacy = {
   items: [
     'O site não tem formulários, não pede cadastro e não usa cookies de rastreamento.',
     'Não usamos Google Analytics, Meta Pixel nem outras ferramentas que identifiquem você.',
-    'Os botões de contato levam a serviços de terceiros (WhatsApp, Google Maps, Instagram e seu aplicativo de e-mail). Ao clicar, você passa a seguir as políticas de privacidade deles.',
+    'Os botões levam a serviços de terceiros (WhatsApp, Google Maps, Instagram e e-mail). Ao clicar, valem as políticas deles.',
     'O mapa interativo do Google só é carregado se você clicar em “Carregar mapa interativo”.',
     'O telefone e o e-mail exibidos são o contato comercial da própria Kando Garage.',
   ],
@@ -504,9 +590,10 @@ export const copy = {
     mapTitle: 'Mapa: Kando Garage, R. Mamud Rahd, 202, Tremembé',
   },
   hero: {
-    placeLabel: 'Bairro',
-    placeValue: 'Tremembé',
-    addressLabel: 'Endereço',
+    // redundante: o eyebrow já diz “Tremembé, SP”. O frontend pode remover estes três campos no mobile.
+    placeLabel: 'Bairro', // redundante
+    placeValue: 'Tremembé', // redundante
+    addressLabel: 'Endereço', // redundante (endereço completo está em Onde estamos e no rodapé)
     /** Texto completo (usado também no og.jpg) */
     proofText: 'Nota 5,0 no Google · 68 avaliações',
     /** Na home o 5,0 aparece em destaque ao lado, então o rótulo não repete o número */
@@ -517,7 +604,7 @@ export const copy = {
     caption: 'Ficha de confiança',
     items: [
       { head: '5,0', label: 'Nota no Google', text: '68 avaliações' },
-      { head: 'Peças à vista na entrega', label: '', text: 'Você vê o que foi substituído' },
+      { head: 'Peças à vista', label: '', text: 'Mostradas na entrega' },
       { head: 'Orçamento antes de mexer', label: '', text: 'Só fazemos o que você aprovar' },
       { head: 'Nacionais e importados', label: '', text: 'Diagnóstico com equipamento' },
     ],

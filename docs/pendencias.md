@@ -18,6 +18,12 @@ Tudo abaixo está tratado no código (`src/content/site.ts`): o item **não apar
 - [ ] Formas de pagamento.
 - [ ] Garantia dos serviços (prazo). Também: atende seguradoras?
 
+## Prova de confiança (invisível até confirmar)
+Estruturas prontas em `src/content/site.ts`, com `confirmed: false`. Não aparecem para o visitante.
+- [ ] **Garantia** (`warranty`): existe garantia? Qual prazo e quais condições? Pedir o texto exato que o cliente aceita publicar. Sem isso, nada é prometido.
+- [ ] **Marcas atendidas** (`brands.items`): quais marcas a oficina atende e pode citar no site? Preencher a lista e ativar `confirmed`.
+- [ ] Mesma resposta de garantia libera a pergunta "Os serviços têm garantia?" no FAQ.
+
 ## Avaliações
 - [ ] **Autorização** para exibir trechos das avaliações do Google com o primeiro nome do autor. Quando houver, preencher `author` e trocar `confirmed: true` em `reviews` e em `how.highlight.quote`. Hoje aparece só o selo 5,0 · 68 avaliações com links.
 - [ ] Atualizar nota e contagem (`company.rating`, hoje 5,0 / 68) antes do deploy.
